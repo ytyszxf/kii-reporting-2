@@ -21,7 +21,7 @@ module.exports = function (config) {
     exclude: [],
 
     client: {
-      captureConsole: false
+      captureConsole: true
     },
 
     /*
@@ -31,7 +31,6 @@ module.exports = function (config) {
      */
     files: [
       { pattern: './config/spec-bundle.js', watched: false },
-      { pattern: './src/assets/**/*', watched: false, included: false, served: true, nocache: false }
     ],
 
     /*

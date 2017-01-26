@@ -23,9 +23,12 @@ import 'core-js/es7/reflect';
 
 // Typescript emit helpers polyfill
 import 'ts-helpers';
+import { test } from './test';
+
+
 
 export function main() {
-  alert('123');
+  test();
 }
 
 main();
