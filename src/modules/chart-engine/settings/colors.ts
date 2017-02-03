@@ -1,3 +1,6 @@
+/**
+ * @desc color pool
+ */
 export var ITEM_COLORS = [
   '#ffa976', '#f88dc7',
   '#9ae05a', '#53d9db',

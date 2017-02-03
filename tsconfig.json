@@ -18,12 +18,14 @@
       "es6"
     ],
     "types": [
+      "jquery",
       "jasmine",
       "node",
       "selenium-webdriver",
       "source-map",
       "uglify-js",
-      "webpack"
+      "webpack",
+      "echarts"
     ]
   },
   "exclude": [

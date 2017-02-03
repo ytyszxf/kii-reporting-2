@@ -30,6 +30,8 @@ export abstract class KRSeries {
    */
   protected _dataSet: any;
 
+  protected _yAxisGroupIndex: number;
+
   protected _seriesType: SeriesType;
   
   /**
@@ -46,23 +48,34 @@ export abstract class KRSeries {
    */
   constructor(
     bindingOptions: IKRChartBindingOptions,
-    dataset: any, seriesType: SeriesType,
-    chartContainer: KRChartContainer
+    chartContainer: KRChartContainer,
+    seriesType: SeriesType,
+    yAxisGroupIndex?: number,
+    dataset?: any
   ) {
     this._bindingOtions = bindingOptions;
     this._dataSet = dataset;
     this._seriesType = seriesType;
     this._chartContainer = chartContainer;
+    this._yAxisGroupIndex = yAxisGroupIndex;
   }
 
   /**
-   * @desc 
+   * @desc render series to make it ready
    */
   public render() {
     this._render();
     return this.series;
   }
 
+  /**
+   *
+   */
+  public update(dataset: any) {
+    this._dataSet = dataset;
+    return this.render();
+  }
+  
   /**
    * @desc core function that produce output
    */

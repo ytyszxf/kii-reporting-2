@@ -7,7 +7,7 @@ export interface IKRChartSeries {
    * @desc series type, pie type is not supported hear.
    * @example 'line', ['line', 'bar']
    */
-  type: SeriesType | Array<SeriesType>;
+  type: SeriesType;
 
   /**
    * @desc bind field name

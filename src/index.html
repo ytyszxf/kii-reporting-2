@@ -17,13 +17,52 @@
   <!-- base url -->
   <base href="<%= htmlWebpackPlugin.options.metadata.baseUrl %>">
 
-
+  <style>
+    app {
+      display: flex;
+      height: 100%;
+      overflow: hidden;
+    }
+    #target{
+      flex: 1;
+    }
+    .left-content{
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+    }
+    .left-content .header{
+      height: 32px;
+    }
+    .left-content .btn-run {
+      float: right;
+      background: #5bc0de;
+      border: none;
+      color: #fff;
+      height: 100%;
+      width: 80px;
+    }
+    #editor{
+      flex: 1;
+      border:solid 1px #ccc;
+    }
+  </style>
 </head>
 
 <body>
 
   <app>
-    Loading...
+    <div class="left-content">
+      <div class="header">
+        <button class="btn-run" id="btn-run">Run</button>
+      </div>
+      <div id="editor">
+      </div>
+    </div>
+    
+    <div id="target">
+       Loading...
+    </div>
   </app>
 
   <% if (htmlWebpackPlugin.options.metadata.isDevServer && htmlWebpackPlugin.options.metadata.HMR !== true) { %>

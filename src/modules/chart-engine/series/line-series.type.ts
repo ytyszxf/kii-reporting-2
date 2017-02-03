@@ -11,6 +11,7 @@ interface IECLineOptions extends IECSeriesOptions{
   symbol?: SymbolName;
   symbolSize?: number;
   showSymbol?: boolean;
+  yAxisGroupIndex?: number;
   areaStyle?: {
     normal?: {
       color?: string;
@@ -40,6 +41,7 @@ export class KRLineSeries extends KRSeries {
         stack: this._seriesType === 'area' ? true : false,
         data: <Array<any>>data
       }];
+      
     } else {
       let depth = categories.length;
       let _data = this._literateData('', data);
@@ -55,6 +57,12 @@ export class KRLineSeries extends KRSeries {
           },
           data: _d.data
         };
+      });
+    }
+
+    if (this._yAxisGroupIndex !== undefined) {
+      seriesOpt.forEach(opt => {
+        opt.yAxisGroupIndex = this._yAxisGroupIndex;
       });
     }
 

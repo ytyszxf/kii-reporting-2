@@ -1,3 +1,7 @@
+
+/**
+ * @desc symbol pool
+ */
 export var LINE_SYMBOLS = [
   'circle',
   'rect',
