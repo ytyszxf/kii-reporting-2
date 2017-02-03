@@ -1,5 +1,1 @@
-export enum AggregationValueType {
-  DATE,
-  VALUE,
-  CATEGORY
-}
+export type AggregationValueType = 'time' | 'value' | 'category';

@@ -7,6 +7,8 @@ import { KRChartContainer } from './chart-container.type';
 import { KRSeries } from './series/series.type';
 import { SeriesType, SeriesTypeNames } from './models/series-type.type';
 import { IKRYAxis, IKRChartSeries } from './interfaces/y-axis.interface';
+import { IAggFormatter } from '../formatter/models/aggregation-formatter/aggregation-formatter.annotation';
+import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
 
 export interface IKRChartSettings {
     xAxis?: IKRAxis;
@@ -43,8 +45,14 @@ export class KRChartEngine {
     return settings;
   }
   
-  public render(target: HTMLDivElement, opts: IKRChartOptions, data: any): KRChartContainer {
-    let chartContainer = new KRChartContainer(target);
+  public render(
+    target: HTMLDivElement,
+    opts: IKRChartOptions,
+    data: any,
+    formatter: IESXAggregationFormatter
+  ): KRChartContainer {
+
+    let chartContainer = new KRChartContainer(target, formatter);
 
     /**
      * if axis is specified, can not longer read from chart name field
@@ -80,6 +88,7 @@ export class KRChartEngine {
           chartContainer.addSeries(s.type, seriesType, bindingOptions, yAxisIndex);
         });
       });
+      
     } else {
       SeriesTypeNames.forEach(typeName => {
         

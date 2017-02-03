@@ -2,6 +2,7 @@ import { IKRChartBindingOptions } from '../interfaces/chart-options.interface';
 import { IECSeriesOptions } from '../interfaces/series-options.interface';
 import { SeriesType } from '../models/series-type.type';
 import { KRChartContainer } from '../chart-container.type';
+import { AggregationValueType } from '../../parser/models/aggregation-value-type.enum';
 
 export abstract class KRSeries {
 
@@ -30,9 +31,17 @@ export abstract class KRSeries {
    */
   protected _dataSet: any;
 
-  protected _yAxisGroupIndex: number;
+  /**
+   * @desc y axis index
+   */
+  protected _yAxisIndex: number;
 
+  /**
+   * @desc series type that called.
+   */ 
   protected _seriesType: SeriesType;
+
+  protected _dataType: AggregationValueType;
   
   /**
    * @desc return production of render
@@ -50,14 +59,16 @@ export abstract class KRSeries {
     bindingOptions: IKRChartBindingOptions,
     chartContainer: KRChartContainer,
     seriesType: SeriesType,
-    yAxisGroupIndex?: number,
-    dataset?: any
+    dataType: AggregationValueType,
+    yAxisIndex?: number,
+    dataset?: any,
   ) {
     this._bindingOtions = bindingOptions;
     this._dataSet = dataset;
     this._seriesType = seriesType;
     this._chartContainer = chartContainer;
-    this._yAxisGroupIndex = yAxisGroupIndex;
+    this._yAxisIndex = yAxisIndex;
+    this._dataType = dataType;
   }
 
   /**
@@ -177,13 +188,6 @@ export abstract class KRSeries {
     let result = _metrics[0].split('>').slice(1)
     result.pop();
     return result;
-  }
-
-  /**
-   * @return {string} get Color
-   */
-  protected getColor() {
-    return this._chartContainer.getColor();
   }
 
   /**

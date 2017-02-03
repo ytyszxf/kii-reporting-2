@@ -5,7 +5,6 @@ import { SymbolName } from '../models/symbol-name.type';
 import { IKRYAxis, IKRChartSeries } from '../interfaces/y-axis.interface';
 import { SeriesType } from '../models/series-type.type';
 
-
 interface IECLineOptions extends IECSeriesOptions{
   stack?: boolean;
   symbol?: SymbolName;
@@ -20,9 +19,9 @@ interface IECLineOptions extends IECSeriesOptions{
 }
 
 @ChartSeries({
-  seriesTypes: ['line', 'area']
+  seriesTypes: ['bar']
 })
-export class KRLineSeries extends KRSeries {
+export class KRBarSeries extends KRSeries {
 
   protected _render() {
     let x = this._bindingOtions.x;
@@ -40,9 +39,9 @@ export class KRLineSeries extends KRSeries {
       }
       seriesOpt = [{
         name: !!series.name ? series.name : series.field,
-        type: 'line',
-        stack: series.stack || this._seriesType === 'area' ? true : false,
-        data: (<Array<any>>data)
+        type: 'bar',
+        stack: series.stack ? true : false,
+        data: <Array<any>>data
       }];
       
     } else {
@@ -54,13 +53,13 @@ export class KRLineSeries extends KRSeries {
         }
         return {
           name: _d.name,
-          type: <SeriesType>'line',
-          stack: series.stack || this._seriesType === 'area' ? true : false,
+          type: <SeriesType>'bar',
+          stack: series.stack ? true : false,
           itemStyle: {
             normal: {
             }
           },
-          data: _d.data,
+          data: _d.data
         };
       });
     }
@@ -68,14 +67,6 @@ export class KRLineSeries extends KRSeries {
     if (this._yAxisIndex !== undefined) {
       seriesOpt.forEach(opt => {
         opt.yAxisIndex = this._yAxisIndex;
-      });
-    }
-
-    if (this._seriesType === 'area') {
-      seriesOpt.forEach(opt => {
-        opt.areaStyle = {
-          normal: {}
-        };
       });
     }
 

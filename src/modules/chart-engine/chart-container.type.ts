@@ -8,6 +8,8 @@ import { IKRXAxis } from './interfaces/x-axis.interface';
 import { IKRYAxis } from './interfaces/y-axis.interface';
 import { KRXAxis } from './components/x-axis.type';
 import { KRYAxis } from './components/y-axis.type';
+import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
+import { AggregationValueType } from '../parser/models/aggregation-value-type.enum';
 
 /**
  * @author george.lin ljz135790@gmail.com
@@ -68,14 +70,23 @@ export class KRChartContainer {
    */
   private _yAxises: KRYAxis[];
 
+  /**
+   * @desc formatter
+   */
+  private _formatter: IESXAggregationFormatter;
 
-  constructor(ele: HTMLDivElement) {
+
+  constructor(
+    ele: HTMLDivElement,
+    formatter: IESXAggregationFormatter
+  ) {
     this._colorIndex = 0;
     this._symbolIndex = 0;
     this._colors = ITEM_COLORS;
     this._containerElement = ele;
     this._yAxises = [];
     this._series = [];
+    this._formatter = formatter;
   }
 
   public update(dataset: any, settings: IKRChartSettings) {
@@ -92,8 +103,12 @@ export class KRChartContainer {
      * add constrains for ts compiler
      */
     class A extends KRSeries { protected _render() { } }
+
+    let dataType =
+      this._xAxis.options.type ||
+      this._formatter.children.find(f => f.field === this._xAxis.field).type;
     
-    let series = new (<typeof A>seriesType)(opts, this, typeName, yAxisGroupIndex);
+    let series = new (<typeof A>seriesType)(opts, this, typeName, dataType, yAxisGroupIndex);
     this._series.push(series);
   }
 
@@ -116,9 +131,22 @@ export class KRChartContainer {
     // **************************************************************
 
     // get axis
-
+    let formatterDataType = this._formatter
+      .children.find(f => f.field === this._xAxis.field).type;
+    let dataType: AggregationValueType = this._xAxis.options.type;
+    if (dataType === 'category') {
+      this._xAxis.data = (<Array<any>>this._dataset[this._xAxis.field]).map(d => d[0]);
+      if (this._xAxis.options.formatter) {
+        let formatter = this._xAxis.options.formatter;
+        this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => formatter(d));
+      } else if (formatterDataType === 'time') {
+        this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => this._formateTimeData(d));
+      }
+    }
     esOptions.xAxis = this._xAxis.options;
+
     esOptions.yAxis = this._yAxises.map(y => y.options);
+    esOptions.color = this._colors;
 
     // **************************************************************
 
@@ -137,17 +165,6 @@ export class KRChartContainer {
     console.log(esOptions);
 
     this._echartInstance.setOption(esOptions);
-  }
-
-  /**
-   * @desc get color from color enum
-   * color will repeat if number of series exceed the total size of color pool.
-   */
-  public getColor() {
-    let color = this._colors[this._colorIndex++];
-    this._colorIndex = (this._colorIndex >= this._colors.length) ?
-      0 : this._colorIndex;
-    return color;
   }
 
   /**
@@ -181,7 +198,13 @@ export class KRChartContainer {
    * @param  {IKRXAxis} xOpts
    */
   private _addXAxis(xOpts: IKRXAxis) {
+
     this._xAxis = new KRXAxis(xOpts);
+    let dataType: AggregationValueType = xOpts.options.type || this._formatter
+      .children.find(f => f.field === xOpts.field)
+      .type;
+    
+    this._xAxis.setOptions({ type: dataType });
   }
 
   /**
@@ -190,4 +213,19 @@ export class KRChartContainer {
   private _addYAxis(yOpts: IKRYAxis) {
     this._yAxises.push(new KRYAxis(yOpts));
   }
+
+  private _formateTimeData(date) {
+    var d = new Date(date);
+    return [
+      d.getFullYear(),
+      ('0' + (d.getMonth() + 1)).slice(-2),
+      ('0' + d.getDate()).slice(-2)
+    ].join('/')
+      + ' ' +
+    [
+      ('0' + d.getHours()).slice(-2),
+      ('0' + d.getMinutes()).slice(-2)
+    ].join(':');
+  }
+  
 }

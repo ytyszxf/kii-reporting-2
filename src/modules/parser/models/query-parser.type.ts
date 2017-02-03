@@ -50,9 +50,9 @@ export class KRQueryParser {
       type: null,
     };
 
-    this.format(query.aggregation, formatter);
+    this.parse(query.aggregation, formatter);
 
-    return formatter
+    return formatter;
   }
   
   /**
@@ -60,7 +60,7 @@ export class KRQueryParser {
    * @param  {IESXAggregationFormatter} parentFormatter
    * @desc retrival aggregation tree and parse aggregation
    */
-  private format(aggregation: IESAggregation, parentFormatter: IESXAggregationFormatter): void {
+  private parse(aggregation: IESAggregation, parentFormatter: IESXAggregationFormatter): void {
     Object.keys(aggregation).forEach((key) => {
       if (this.isMetric(aggregation[key])) {
         let metricName = Object.keys(aggregation[key])[0];
@@ -80,8 +80,7 @@ export class KRQueryParser {
           type: this.getType(aggregationName)
         };
         let childAggreagations = aggregation[key].aggs || aggregation[key].aggregations;
-        this.format(childAggreagations, formatter);
-
+        this.parse(childAggreagations, formatter);
         parentFormatter.children.push(formatter);
       }
     });
@@ -98,11 +97,11 @@ export class KRQueryParser {
   private getType(aggregationName: string): AggregationValueType {
     switch (aggregationName) {
       case 'date_histogram':
-        return AggregationValueType.DATE;
+        return 'time';
       case 'histogram':
-        return AggregationValueType.VALUE;
+        return 'value';
       default:
-        return AggregationValueType.CATEGORY;
+        return 'category';
     }
   }
 }

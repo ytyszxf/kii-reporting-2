@@ -17,14 +17,19 @@ import { IESFilter } from '../modules/formatter/interfaces/es/es-filter.interfac
 import { Http, RequestMethod } from './http';
 
 declare var editorResult: IKRChartSettings;
+declare var editorUrl: string;
 
 export function start() {
   _prepareUI().then((editor: any) => {
+    updateConsole('Ready to go.');
     document.getElementById('btn-run').addEventListener('click', () => {
       let value = `
         ${editor.getValue()}
 
         window.editorResult = opts;
+        if(url){
+          window.editorUrl = url;
+        }
       `;
       eval(value);
       _execute(editorResult);
@@ -37,15 +42,26 @@ function _execute(opts: IKRChartSettings) {
   let {
     formatterEngine, chartEngine
   } = bootstrap();
+  updateConsole('fetching data...');
 
   _executeQuery(opts.chartQuery)
     .subscribe((response) => {
+      updateConsole('rendering graph...');
+      let startTime = new Date().getTime();
       let parser = new KRQueryParser();
-      let result = parser.parseQuery(opts.chartQuery);
-      let formattedData = formatterEngine.format(response, result);
+      let formatter = parser.parseQuery(opts.chartQuery);
+      let formattedData = formatterEngine.format(response, formatter);
+      console.log(formattedData);
       let target = <HTMLDivElement>document.getElementById('target');
-      chartEngine.render(target, opts.chartOptions, formattedData);
+      chartEngine.render(target, opts.chartOptions, formattedData, formatter);
+      let endTime = new Date().getTime();
+      let msg = `Done. Time consumption: ${(endTime - startTime) / 1000}s`;
+      updateConsole(msg);
     });
+}
+
+function updateConsole(msg) {
+  document.getElementById('time-consumption').innerText = msg;
 }
 
 function _executeQuery(chartQuery: IChartQuery) {
@@ -69,7 +85,7 @@ function _executeQuery(chartQuery: IChartQuery) {
   };
 
   let payload = {
-    url: 'http://localhost:9200/demo/_search',
+    url: editorUrl || 'http://localhost:9200/demo/_search',
     method: <RequestMethod>'POST',
     body: query
   };
@@ -85,7 +101,6 @@ function _prepareUI() {
         x: {
           field: 'byHour',
           options: {
-            type: "time",
             name: "Time"
           }
         },
@@ -158,7 +173,8 @@ function _prepareUI() {
         updateInterval: 500,
         dragAndDrop: true
       });
-      editor.setValue(`var opts = ${JSON.stringify(_opts, null, 2)}`);
+      editor.setValue(`var url = 'http://localhost:9200/demo/_search';\r\nvar opts = ${JSON.stringify(_opts, null, 2)}
+      `);
       resolve(editor);
     };
     

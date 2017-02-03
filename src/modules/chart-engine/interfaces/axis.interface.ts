@@ -46,8 +46,11 @@ export interface IKRAxisOptions {
   axisLine?: IKRAxisLine;
   axisTick?: IKRAxisTick;
   axisLabel?: IKRAxisLabel;
+  formatter?: Function;
+  data?: Array<any>;
 }
 
 export interface IKRAxis {
   options?: IKRAxisOptions;
+  
 }

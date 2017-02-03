@@ -16,7 +16,10 @@ export function Http(opts: IHttpOptions) {
       url: opts.url,
       data: JSON.stringify(opts.body),
       type: opts.method,
-      dataType: 'json'
+      dataType: 'json',
+      beforeSend: function (arg) {
+        arg.setRequestHeader('Authorization', 'Bearer super_token');
+      }
     }).then((res) => {
       subscriber.next(res);
     });
