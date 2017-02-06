@@ -102,13 +102,13 @@ export class KRChartContainer {
      * @desc this class only helps to
      * add constrains for ts compiler
      */
-    class A extends KRSeries { protected _render() { } }
+    class VirtualSeries extends KRSeries { protected _render() { }; protected get metrics() { return [];} }
 
     let dataType =
       this._xAxis.options.type ||
       this._formatter.children.find(f => f.field === this._xAxis.field).type;
     
-    let series = new (<typeof A>seriesType)(opts, this, typeName, dataType, yAxisGroupIndex);
+    let series = new (<typeof VirtualSeries>seriesType)(opts, this, typeName, dataType, yAxisGroupIndex);
     this._series.push(series);
   }
 

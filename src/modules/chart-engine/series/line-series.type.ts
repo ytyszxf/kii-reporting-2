@@ -25,62 +25,70 @@ interface IECLineOptions extends IECSeriesOptions{
 export class KRLineSeries extends KRSeries {
 
   protected _render() {
-    let x = this._bindingOtions.x;
-    let y = <IKRYAxis>this._bindingOtions.y;
-    let series = <IKRChartSeries>y.series;
     
     this._bindingOtions.x.options;
-    let data = this.getData(x.field, series.field);
-    let categories = this.getCategories(x.field, series.field);
+    let data = this.data;
 
     let seriesOpt: IECLineOptions[] = [];
-    if (!categories.length) {
+    if (data instanceof Array) {
       if (this._dataType === 'category') {
         data = (<Array<any>>data).map(d => d[1]);
       }
-      seriesOpt = [{
-        name: !!series.name ? series.name : series.field,
-        type: 'line',
-        stack: series.stack || this._seriesType === 'area' ? true : false,
-        data: (<Array<any>>data)
-      }];
-      
+      seriesOpt = [
+        Object.assign({
+          name: !!this._options.name ? this._options.name : this._options.field,
+          data: (<Array<any>>data)
+        }, this.getOptions())
+      ];
     } else {
-      let depth = categories.length;
       let _data = this._literateData('', data);
       seriesOpt = _data.map(_d => {
         if (this._dataType === 'category') {
           _d.data = _d.data.map(d => d[1]);
         }
-        return {
+        return Object.assign({
           name: _d.name,
-          type: <SeriesType>'line',
-          stack: series.stack || this._seriesType === 'area' ? true : false,
           itemStyle: {
             normal: {
             }
           },
           data: _d.data,
-        };
-      });
-    }
-
-    if (this._yAxisIndex !== undefined) {
-      seriesOpt.forEach(opt => {
-        opt.yAxisIndex = this._yAxisIndex;
-      });
-    }
-
-    if (this._seriesType === 'area') {
-      seriesOpt.forEach(opt => {
-        opt.areaStyle = {
-          normal: {}
-        };
+        }, this.getOptions()) ;
       });
     }
 
     this._echartSeriesOptions = seriesOpt;
     console.log(data);
+  }
+
+  protected get metrics() {
+    let x = this._bindingOtions.x;
+    let y = <IKRYAxis>this._bindingOtions.y;
+    let series = <IKRChartSeries>y.series;
+    return [series.field];
+  }
+
+  private getOptions() {
+    let opts: IECLineOptions  = {
+      type: <SeriesType>'line',
+      showSymbol: this._options.showSymbol,
+      stack: this._options.stack || this._seriesType === 'area' ? true : false,
+    };
+
+    if (this._yAxisIndex !== undefined) {
+      opts.yAxisIndex = this._yAxisIndex;
+    }
+
+    if (this._seriesType === 'area') {
+      opts.areaStyle = {
+        normal: {}
+      };
+    }
+
+    this.putProperty(opts, this._options, 'showSymbol');
+    this.putProperty(opts, this._options, 'smooth');
+
+    return opts;
   }
 
   private _literateData(name: string, obj: Object): { name: string; data: Array<any> }[] {
@@ -98,4 +106,5 @@ export class KRLineSeries extends KRSeries {
       }
     }
   }
+  
 }

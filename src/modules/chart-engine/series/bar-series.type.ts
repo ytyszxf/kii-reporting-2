@@ -24,28 +24,22 @@ interface IECLineOptions extends IECSeriesOptions{
 export class KRBarSeries extends KRSeries {
 
   protected _render() {
-    let x = this._bindingOtions.x;
-    let y = <IKRYAxis>this._bindingOtions.y;
-    let series = <IKRChartSeries>y.series;
     
-    this._bindingOtions.x.options;
-    let data = this.getData(x.field, series.field);
-    let categories = this.getCategories(x.field, series.field);
+    let data = this.data;
 
     let seriesOpt: IECLineOptions[] = [];
-    if (!categories.length) {
+    if (data instanceof Array) {
       if (this._dataType === 'category') {
         data = (<Array<any>>data).map(d => d[1]);
       }
       seriesOpt = [{
-        name: !!series.name ? series.name : series.field,
+        name: !!this._options.name ? this._options.name : this._options.field,
         type: 'bar',
-        stack: series.stack ? true : false,
+        stack: this._options.stack ? true : false,
         data: <Array<any>>data
       }];
       
     } else {
-      let depth = categories.length;
       let _data = this._literateData('', data);
       seriesOpt = _data.map(_d => {
         if (this._dataType === 'category') {
@@ -54,7 +48,7 @@ export class KRBarSeries extends KRSeries {
         return {
           name: _d.name,
           type: <SeriesType>'bar',
-          stack: series.stack ? true : false,
+          stack: this._options.stack ? true : false,
           itemStyle: {
             normal: {
             }
@@ -72,6 +66,13 @@ export class KRBarSeries extends KRSeries {
 
     this._echartSeriesOptions = seriesOpt;
     console.log(data);
+  }
+
+  protected get metrics() {
+    let x = this._bindingOtions.x;
+    let y = <IKRYAxis>this._bindingOtions.y;
+    let series = <IKRChartSeries>y.series;
+    return [series.field];
   }
 
   private _literateData(name: string, obj: Object): { name: string; data: Array<any> }[] {

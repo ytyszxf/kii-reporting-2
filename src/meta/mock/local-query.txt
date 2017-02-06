@@ -1,0 +1,67 @@
+var headers = {};
+var url = 'http://localhost:9200/demo/_search';
+var opts = {
+  "chartOptions": {
+    "axises": {
+      "x": {
+        "field": "byHour",
+        "options": {
+          "name": "Time"
+        }
+      },
+      "y": [
+        {
+          "series": {
+            "type": "line",
+            "name": "A line",
+            "field": "byHour>byType>avg_brightness",
+          },
+          "options": {
+            "name": "Brightness"
+          }
+        }
+      ]
+    }
+  },
+  "chartQuery": {
+    "filter": {},
+    "aggregation": {
+      "byHour": {
+        "aggs": {
+          "byType": {
+            "terms": {
+              "field": "type"
+            },
+            "aggs": {
+              "avg_brightness": {
+                "avg": {
+                  "field": "brightness"
+                }
+              },
+              "sum_brightness": {
+                "sum": {
+                  "field": "brightness"
+                }
+              }
+            }
+          },
+          "avg_brightness": {
+            "avg": {
+              "field": "brightness"
+            }
+          },
+          "avg_power": {
+            "avg": {
+              "field": "power"
+            }
+          }
+        },
+        "date_histogram": {
+          "field": "date",
+          "interval": "hour"
+        }
+      }
+    }
+  }
+}
+      

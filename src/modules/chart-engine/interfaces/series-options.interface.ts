@@ -1,9 +1,9 @@
 import { SeriesType } from '../models/series-type.type';
 
 export interface IECSeriesOptions {
-  name: string;
+  name?: string;
   type: SeriesType;
-  data: Array<any>;
+  data?: Array<any>;
   itemStyle?: {
     normal?: {
       color?: string;

@@ -1,0 +1,94 @@
+var headers = {"Authorization": "Bearer super_token"};
+var url = 'http://121.199.7.69:9200/493e83c9/_search';
+var opts = {
+  "chartOptions": {
+    "axises": {
+      "x": {
+        "field": "byTime",
+        "options": {
+          "name": "Time"
+        }
+      },
+      "y": [
+        {
+          "series": {
+            "type": "line",
+            "name": "A line",
+            "field": "byTime>02工位>CALC",
+            "haltHandler": "ZERO"
+          },
+          "options": {
+            "name": "Brightness"
+          }
+        }
+      ]
+    }
+  },
+  "chartQuery": {
+    "filter": {
+    	"must_not": [],
+      "must": [
+        {
+          "terms": {
+            "state.target": [
+              "th.f83120e36100-870b-6e11-b1d8-026da82a",
+              "th.f83120e36100-870b-6e11-b1d8-034dff1a"
+            ]
+          }
+        },
+        {
+          "range": {
+            "state.date": {
+              "gte": 1454406685000,
+              "lte": 1486115485121,
+              "format": "epoch_millis"
+            }
+          }
+        }
+      ]
+    },
+    "aggregation": {
+        "byTime": {
+            "date_histogram": {
+                "field": "state.date",
+                "interval": "1d"
+            },
+            "aggs": {
+                "02工位": {
+                    "aggs": {
+                        "CALC": {
+                            "avg": {
+                                "field": "state.CO2"
+                            }
+                        }
+                    },
+                    "filter": {
+                        "terms": {
+                            "state.target": [
+                                "th.f83120e36100-870b-6e11-b1d8-026da82a"
+                            ]
+                        }
+                    }
+                },
+                "01工位": {
+                    "aggs": {
+                        "CALC": {
+                            "avg": {
+                                "field": "state.CO2"
+                            }
+                        }
+                    },
+                    "filter": {
+                        "terms": {
+                            "state.target": [
+                                "th.f83120e36100-870b-6e11-b1d8-034dff1a"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+  }
+}
+      

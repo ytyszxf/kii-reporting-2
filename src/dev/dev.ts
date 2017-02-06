@@ -18,6 +18,7 @@ import { Http, RequestMethod } from './http';
 
 declare var editorResult: IKRChartSettings;
 declare var editorUrl: string;
+declare var editorHeaders: Object;
 
 export function start() {
   _prepareUI().then((editor: any) => {
@@ -27,9 +28,8 @@ export function start() {
         ${editor.getValue()}
 
         window.editorResult = opts;
-        if(url){
-          window.editorUrl = url;
-        }
+        window.editorUrl = url;
+        window.editorHeaders = headers;
       `;
       eval(value);
       _execute(editorResult);
@@ -87,7 +87,8 @@ function _executeQuery(chartQuery: IChartQuery) {
   let payload = {
     url: editorUrl || 'http://localhost:9200/demo/_search',
     method: <RequestMethod>'POST',
-    body: query
+    body: query,
+    headers: editorHeaders
   };
 
   return Http(payload);
@@ -173,15 +174,14 @@ function _prepareUI() {
         updateInterval: 500,
         dragAndDrop: true
       });
-      editor.setValue(`var url = 'http://localhost:9200/demo/_search';\r\nvar opts = ${JSON.stringify(_opts, null, 2)}
-      `);
+      //editor.setValue(`var headers = {};\r\nvar url = 'http://localhost:9200/demo/_search';\r\nvar opts = ${JSON.stringify(_opts, null, 2)}`);
+      editor.setValue(require('../meta/mock/beehive-es-query.txt'));
       resolve(editor);
     };
     
     let style =
       require('codemirror/lib/codemirror.css')
       + require('javascript-editor/css/codemirror.css')
-      + require('javascript-editor/css/style.css')
       + require('javascript-editor/css/theme.css')
       + `@media all { .CodeMirror { font-size: 12px !important; } }`;
     let header: HTMLHeadElement = document.getElementsByTagName('head')[0];

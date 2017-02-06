@@ -8,10 +8,11 @@ import { AggFormatter } from './aggregation-formatter.annotation';
 export class KRFilterFormatter extends KRAggregationFormatter {
 
   public format(context: any, data: any, opt: IESXAggregationFormatter): IFormatContext {
-    context[opt.field] = [opt.field, {}];
+    let subContext = {};
+    context[opt.field] = [[opt.field, subContext]];
 
     return {
-      subContexts: [context[opt.field][1]],
+      subContexts: [subContext],
       subDataset: [data]
     };
   }

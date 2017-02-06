@@ -1,0 +1,86 @@
+var headers = {"Authorization": "Bearer super_token"};
+var url = 'http://121.199.7.69:9200/493e83c9/_search';
+var opts = {
+  "chartOptions": {
+    "axises": {
+      "x": {
+        "field": "byTime",
+        "options": {
+          "name": "Time"
+        }
+      },
+      "y": [
+        {
+          "series": {
+            "type": "line",
+            "name": "A line",
+            "script": function(path, MIN, MAX){
+            	let result = MIN.map((min, i)=>{
+                return [MIN[i][0], (MIN[i][1] + MAX[i][1]) / 2];
+              });
+              console.log(path);
+              return result;
+            },
+            "context": ["byTime>position>MIN","byTime>position>MAX"],
+            "haltHandler": "AVG"
+          },
+          "options": {
+            "name": "Brightness"
+          }
+        }
+      ]
+    }
+  },
+  "chartQuery": {
+    "filter": {
+    	"must_not": [],
+      "must": [
+        {
+          "terms": {
+            "state.target": [
+              "th.f83120e36100-870b-6e11-b1d8-026da82a",
+              "th.f83120e36100-870b-6e11-b1d8-034dff1a"
+            ]
+          }
+        },
+        {
+          "range": {
+            "state.date": {
+              "gte": 1454406685000,
+              "lte": 1486115485121,
+              "format": "epoch_millis"
+            }
+          }
+        }
+      ]
+    },
+    "aggregation": {
+        "byTime": {
+            "date_histogram": {
+                "field": "state.date",
+                "interval": "1d"
+            },
+            "aggs": {
+                "position": {
+                    "aggs": {
+                        "MAX": {
+                            "max": {
+                                "field": "state.CO2"
+                            }
+                        },
+                        "MIN": {
+                            "min": {
+                                "field": "state.CO2"
+                            }
+                        }
+                    },
+                    "terms": {
+                        "field": "state.target"
+                    }
+                }
+            }
+        }
+    }
+  }
+}
+      

@@ -1,5 +1,6 @@
 import { IKRAxis } from './axis.interface';
 import { SeriesType } from '../models/series-type.type';
+import { HaltHandler, IHaltHanlder } from '../models/halt-handler.type';
 
 
 export interface IKRChartSeries {
@@ -18,10 +19,17 @@ export interface IKRChartSeries {
   /**
    * @desc script that parses origin data into series,
    *  only works when field is not specified
-   * @example script: "doc['maxPower'] - doc['minPower']"
+   * @example script: function(context1, context2, ...){
+   *  
+   * }
    */
-  script?: string;
+  script?: Function;
 
+  /**
+   * @desc context data that will be input of script
+   */
+  context?: Array<string>;
+  
   /**
    * @desc series name that shows on legend,
    * if not specified, will use metric's name instead.
@@ -42,6 +50,22 @@ export interface IKRChartSeries {
    * @desc bubbleColor bind field, only works for series: 'bubble';
    */
   bubbleColor?: string;
+
+  /**
+   * @desc halt Method
+   */
+  haltHandler?: IHaltHanlder | HaltHandler;
+
+  /**
+   * @desc es showSymbol
+   */
+  showSymbol?: boolean;
+
+  /**
+   * @desc smooth
+   */
+  smooth?: boolean;
+
 }
 
 export interface IKRYAxis extends IKRAxis{

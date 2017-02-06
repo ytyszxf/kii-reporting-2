@@ -1,7 +1,7 @@
 import { IESXAggregationFormatter } from '../../interfaces/aggregation-formatter.interface';
 
 export interface IFormatContext {
-  subContexts: Array<Array<any>>;
+  subContexts: Array<any>;
   subDataset: Array<any>;
 }
 

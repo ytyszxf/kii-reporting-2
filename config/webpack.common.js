@@ -112,7 +112,7 @@ module.exports = function (options) {
          * See: https://github.com/webpack/raw-loader
          */
         {
-          test: /\.html$/,
+          test: /\.(html|txt)$/,
           use: 'raw-loader',
           exclude: [helpers.root('src/index.html')]
         },
