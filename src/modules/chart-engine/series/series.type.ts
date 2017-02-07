@@ -5,6 +5,7 @@ import { KRChartContainer } from '../chart-container.type';
 import { AggregationValueType } from '../../parser/models/aggregation-value-type.enum';
 import { IKRYAxis, IKRChartSeries } from '../interfaces/y-axis.interface';
 import { IHaltHanlder, HaltHandlerProvider } from '../models/halt-handler.type';
+import { DataDictionary } from '../../formatter/models/data-dictionary.type';
 
 export abstract class KRSeries {
 
@@ -31,7 +32,7 @@ export abstract class KRSeries {
   /**
    * @desc input dataset that used to generate output
    */
-  protected _dataSet: any;
+  protected _dataDict: DataDictionary;
 
   /**
    * @desc y axis index
@@ -47,6 +48,17 @@ export abstract class KRSeries {
    * @desc series data type
    */
   protected _dataType: AggregationValueType;
+
+  protected getName(path: string[] = []): string {
+    if (!this._options.name) return null;
+    if (typeof this._options.name === 'string') {
+      return this._options.name;
+      
+    } else if (this._options.name instanceof Function) {
+      return (<Function>this._options.name).apply(this, [path]);
+    }
+    return path.join('-');
+  }
   
   /**
    * @desc return production of render
@@ -78,7 +90,7 @@ export abstract class KRSeries {
     dataset?: any,
   ) {
     this._bindingOtions = bindingOptions;
-    this._dataSet = dataset;
+    this._dataDict = dataset;
     this._seriesType = seriesType;
     this._chartContainer = chartContainer;
     this._yAxisIndex = yAxisIndex;
@@ -96,8 +108,8 @@ export abstract class KRSeries {
   /**
    *
    */
-  public update(dataset: any) {
-    this._dataSet = dataset;
+  public update(dataDict: DataDictionary) {
+    this._dataDict = dataDict;
     return this.render();
   }
   
@@ -123,101 +135,30 @@ export abstract class KRSeries {
    * @param  {string} bucket
    * @param  {string|string[]} metrics
    */
-  protected getData(bucket: string, metrics: string[]): Array<any> | Object {
+  protected getData(bucket: string, metrics: string[]): {path: string[], data: Array<any>}[]{
 
-    /**
-     *  byDate: [
-     *    ['day1',
-     *      {
-     *        "byType": [
-     *          ["lap",
-     *            {
-     *              "byLocation": [
-     *                ['B1', {brightness: 5}],
-     *                ...
-     *              ]
-     *            }
-     *          ],
-     *          ...
-     *        ]
-     *      }
-     *    ]
-     *  ] 
-     */
     let haltHandler = this._options.haltHandler;
-    let metricNames = metrics.map(m => m.split('>').pop());
-    let result: Array<any> | Object;
-    let pathLink = metrics[0].split('>').slice(1);
-    let metricName = pathLink.pop();
-    if (pathLink.length > 0) {
-      result = {};
-      (<Array<any>>this._dataSet[bucket])
-        .forEach((raw) => {
-          /**
-           * @example
-           *  {
-           *    "byType": [
-           *      ["lap",
-           *        {
-           *          "byLocation": [
-           *            ['B1',
-           *              {
-           *                brightness: 5
-           *              }
-           *            ]
-           *          ]
-           *        }
-           *      ]
-           *    ]
-           *  }
-           */
-          let x = raw[0];
-          if (pathLink.length) {
-            literate(raw[1][pathLink[0]], result, pathLink.slice(1));
-          }
+    let result = this._dataDict.search(bucket, metrics[0]).data;
 
-          function literate(data, r, pathLink: string[]) {
-            if (!pathLink.length) {
-              data.forEach(d => {
-                if (!r[d[0]]) { r[d[0]] = [];}
-                r[d[0]].push([x, ...metricNames.map(n=> d[1][n])]);
-              })
-            } else {
-              data.forEach(d => {
-                if (!r[d[0]]) { r[d[0]] = {}; }
-                let _r = r[d[0]];
-                let _d = d[1][pathLink[0]];
-                let _pathLink = pathLink.slice(1);
-                literate(_d, _r, _pathLink);
-              });
-            }
-          }
+    let output = DataDictionary.isFinal(result)? [result]: getFinalArrays([], result);
+    output.forEach((ar) => {
+      HaltHandlerProvider.processDataset(ar.data, haltHandler);
+    });
+    return output;
+
+    function getFinalArrays(path: string[], obj: Object): { path: string[]; data: Array<any> }[] {
+      let keys = Object.keys(obj);
+      if (DataDictionary.isFinal(obj[keys[0]])) {
+        return keys.map(key => {
+          return { path: path.concat([key]), data: obj[key].data };
         });
-      getFinalArrays(result).forEach((ar) => {
-        HaltHandlerProvider.processDataset(ar, haltHandler);
-      });
-    } else {
-      result = (<Array<any>>this._dataSet[bucket])
-        .map((d) => {
-          return [d[0], ...metricNames.map(n => d[1][n])];
-        });
-      HaltHandlerProvider.processDataset((<Array<any>>result), haltHandler);
-    }
-
-    return result;
-
-    function getFinalArrays(object: Object): Array<Array<any>> {
-      let result = [];
-      for (let key in object) {
-        if (object[key] instanceof Array) {
-          result.push(object[key])
-        } else {
-          result = result.concat(getFinalArrays(object[key]));
+      } else {
+        let result = [];
+        for (let key of keys) {
+          result = result.concat(getFinalArrays(path.concat([key]), obj[key]));
         }
       }
-      return result;
     }
-
   }
 
   /**
@@ -243,62 +184,20 @@ export abstract class KRSeries {
   /**
    * @desc render script 
    */
-  protected renderScript() {
-    if (!this._options.context || !this._options.context.length) throw new Error('context is required by script method.');
+  protected renderScript(): {path: string[], data: Array<any>}[] {
+    if (!this._options.context || !this._options.context.length)
+      throw new Error('context is required by script method.');
 
-    let contexts = this._options.context.map(field => {
+    let contexts: {path: string[], data: any[]}[][] = this._options.context.map(field => {
       return this.getData(this._bindingOtions.x.field, [field]);
     });
 
-    let fullPath = this._options.context[0];
-
-    let pathLink = fullPath.split('>')
-    pathLink.pop();
-    pathLink.splice(0, 1);
-    if (!pathLink.length) {
-      return this._options.script.apply(this._options.script, contexts);
-    } else {
-      let paths = getPath(contexts[0]);
-
-      let result = {};
-      let currentObject = result;
-
-      paths.forEach((path, i) => {
-        let _subContexts: any[] = contexts;
-        path.forEach((pace, j) => {
-          _subContexts = contexts.map(_context => {
-            return _context[pace];
-          });
-          currentObject[pace] = j === path.length - 1 ?
-            this._options.script.apply(this._options.script, [path].concat(_subContexts)) : {};
-        });
-      });
-
-      return result;
-    }
-
-    function getPath(o: Object): Array<Array<string>> {
-      if (o instanceof Array) {
-        return null;
-      }
-
-      /**
-       * [['p1'], ['p2']]
-       */
-      let result = [];
-      for (let key in o) {
-        let _result = getPath(o[key]);
-        if (!_result) {
-          result.push([key]);
-        } else {
-          _result.forEach(r => {
-            result.push([key].concat(r));
-          });
-        }
-      }
-      return result;
-    }
-    
+    let context = contexts[0];
+    return context.map((d, i) => {
+      let _cxts = contexts.map(c => c[i].data);
+      let result: any[] = this._options.script.apply(this._options.script, [d.path].concat(_cxts));
+      return { path: d.path, data: result };
+    });
   }
 
   /**

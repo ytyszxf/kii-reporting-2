@@ -50,10 +50,10 @@ function _execute(opts: IKRChartSettings) {
       let startTime = new Date().getTime();
       let parser = new KRQueryParser();
       let formatter = parser.parseQuery(opts.chartQuery);
-      let formattedData = formatterEngine.format(response, formatter);
-      console.log(formattedData);
+      let dataDict = formatterEngine.format(response, formatter);
+      console.log(dataDict);
       let target = <HTMLDivElement>document.getElementById('target');
-      chartEngine.render(target, opts.chartOptions, formattedData, formatter);
+      chartEngine.render(target, opts.chartOptions, dataDict, formatter);
       let endTime = new Date().getTime();
       let msg = `Done. Time consumption: ${(endTime - startTime) / 1000}s`;
       updateConsole(msg);
@@ -175,7 +175,7 @@ function _prepareUI() {
         dragAndDrop: true
       });
       //editor.setValue(`var headers = {};\r\nvar url = 'http://localhost:9200/demo/_search';\r\nvar opts = ${JSON.stringify(_opts, null, 2)}`);
-      editor.setValue(require('../meta/mock/beehive-es-query.txt'));
+      editor.setValue(require('../meta/mock/local-query.txt'));
       resolve(editor);
     };
     

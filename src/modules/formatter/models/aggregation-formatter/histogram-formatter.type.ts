@@ -3,10 +3,10 @@ import { IESXAggregationFormatter } from '../../interfaces/aggregation-formatter
 import { AggFormatter, FormatMode } from './aggregation-formatter.annotation';
 
 @AggFormatter({
-  aggType: 'terms',
+  aggType: 'histogram',
   formatMode: FormatMode.EXPAND
 })
-export class KRTermsFormatter extends KRAggregationFormatter {
+export class KRHistogramFormatter extends KRAggregationFormatter {
 
   public format(context: any, data: {buckets: Array<any>}, opt: IESXAggregationFormatter): IFormatContext {
     let result = data.buckets.map(bucket => [bucket.key, {}]);

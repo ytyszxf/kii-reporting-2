@@ -30,35 +30,15 @@ export class KRLineSeries extends KRSeries {
     let data = this.data;
 
     let seriesOpt: IECLineOptions[] = [];
-    if (data instanceof Array) {
-      if (this._dataType === 'category') {
-        data = (<Array<any>>data).map(d => d[1]);
-      }
-      seriesOpt = [
-        Object.assign({
-          name: !!this._options.name ? this._options.name : this._options.field,
-          data: (<Array<any>>data)
-        }, this.getOptions())
-      ];
-    } else {
-      let _data = this._literateData('', data);
-      seriesOpt = _data.map(_d => {
-        if (this._dataType === 'category') {
-          _d.data = _d.data.map(d => d[1]);
-        }
-        return Object.assign({
-          name: _d.name,
-          itemStyle: {
-            normal: {
-            }
-          },
-          data: _d.data,
-        }, this.getOptions()) ;
-      });
-    }
+    seriesOpt = data.map((d) => {
+      return this.buildOptions({
+          name: this.getName(d.path),
+          data: this._dataType === 'category' ? d.data.map(_d => _d[0]) : d.data
+        });
+    });
 
     this._echartSeriesOptions = seriesOpt;
-    console.log(data);
+    console.log(this._echartSeriesOptions);
   }
 
   protected get metrics() {
@@ -68,43 +48,28 @@ export class KRLineSeries extends KRSeries {
     return [series.field];
   }
 
-  private getOptions() {
-    let opts: IECLineOptions  = {
+  private buildOptions(opts: IECLineOptions) {
+    let _opts: IECLineOptions  = {
       type: <SeriesType>'line',
       showSymbol: this._options.showSymbol,
       stack: this._options.stack || this._seriesType === 'area' ? true : false,
     };
 
     if (this._yAxisIndex !== undefined) {
-      opts.yAxisIndex = this._yAxisIndex;
+      _opts.yAxisIndex = this._yAxisIndex;
     }
 
     if (this._seriesType === 'area') {
-      opts.areaStyle = {
+      _opts.areaStyle = {
         normal: {}
       };
     }
 
-    this.putProperty(opts, this._options, 'showSymbol');
-    this.putProperty(opts, this._options, 'smooth');
+    this.putProperty(_opts, this._options, 'showSymbol');
+    this.putProperty(_opts, this._options, 'smooth');
+    Object.assign(_opts, opts);
 
-    return opts;
-  }
-
-  private _literateData(name: string, obj: Object): { name: string; data: Array<any> }[] {
-    let keys = Object.keys(obj);
-    if (keys.length > 0) {
-      if (obj[keys[0]] instanceof Array) {
-        return keys.map(key => {
-          return { name: name + key, data: obj[key] };
-        });
-      }
-    } else {
-      let result = [];
-      for (let key of keys) {
-        result = result.concat(this._literateData(name + key, obj[key]));
-      }
-    }
+    return _opts;
   }
   
 }

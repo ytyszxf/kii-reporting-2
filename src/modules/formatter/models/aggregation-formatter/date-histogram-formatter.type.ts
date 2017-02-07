@@ -1,9 +1,10 @@
 import { KRAggregationFormatter, IFormatContext } from './aggregation-formatter.type';
 import { IESXAggregationFormatter } from '../../interfaces/aggregation-formatter.interface';
-import { AggFormatter } from './aggregation-formatter.annotation';
+import { AggFormatter, FormatMode } from './aggregation-formatter.annotation';
 
 @AggFormatter({
-  aggType: 'date_histogram'
+  aggType: 'date_histogram',
+  formatMode: FormatMode.EXPAND
 })
 export class KRDateHistogramFormatter extends KRAggregationFormatter {
 

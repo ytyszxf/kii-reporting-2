@@ -3,10 +3,10 @@ import { IESXAggregationFormatter } from '../../interfaces/aggregation-formatter
 import { AggFormatter, FormatMode } from './aggregation-formatter.annotation';
 
 @AggFormatter({
-  aggType: 'filter',
+  aggType: 'children',
   formatMode: FormatMode.INSERT
 })
-export class KRFilterFormatter extends KRAggregationFormatter {
+export class KRChildrenFormatter extends KRAggregationFormatter {
 
   public format(context: any, data: any, opt: IESXAggregationFormatter): IFormatContext {
     let subContext = {};

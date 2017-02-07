@@ -10,6 +10,7 @@ import { KRXAxis } from './components/x-axis.type';
 import { KRYAxis } from './components/y-axis.type';
 import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
 import { AggregationValueType } from '../parser/models/aggregation-value-type.enum';
+import { DataDictionary } from '../formatter/models/data-dictionary.type';
 
 /**
  * @author george.lin ljz135790@gmail.com
@@ -48,7 +49,7 @@ export class KRChartContainer {
   /**
    * @desc dataset
    */
-  private _dataset: any;
+  private _dataDict: DataDictionary;
 
   /**
    * @desc chart settings
@@ -89,8 +90,8 @@ export class KRChartContainer {
     this._formatter = formatter;
   }
 
-  public update(dataset: any, settings: IKRChartSettings) {
-    this._dataset = dataset;
+  public update(dataDict: DataDictionary, settings: IKRChartSettings) {
+    this._dataDict = dataDict;
     this._chartSettings = settings;
     this.render();
   }
@@ -115,7 +116,7 @@ export class KRChartContainer {
   public render() {
     this._echartInstance = ECharts.init(this._containerElement);
     this._series.forEach(s => {
-      s.update(this._dataset);
+      s.update(this._dataDict);
     });
 
     let esOptions: ECharts.EChartOption = {};
@@ -135,7 +136,7 @@ export class KRChartContainer {
       .children.find(f => f.field === this._xAxis.field).type;
     let dataType: AggregationValueType = this._xAxis.options.type;
     if (dataType === 'category') {
-      this._xAxis.data = (<Array<any>>this._dataset[this._xAxis.field]).map(d => d[0]);
+      this._xAxis.data = this._dataDict.getBucketKeys(this._xAxis.field);
       if (this._xAxis.options.formatter) {
         let formatter = this._xAxis.options.formatter;
         this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => formatter(d));

@@ -4,6 +4,7 @@ import { KRMetricFormatter } from './models/metric-formatter/metric-formatter.ty
 import { KRAggregationFormatter } from './models/aggregation-formatter/aggregation-formatter.type';
 import { ROOT_AGG_FORMATTER } from './models/aggregation-formatter/root-agg-formatter.type';
 import { DEFAULT_METRIC_FORMMATTER } from './models/metric-formatter/default-metric-formatter.type';
+import { DataDictionary } from './models/data-dictionary.type';
 
 export class FormatterEngine {
 
@@ -22,10 +23,9 @@ export class FormatterEngine {
     this._aggFormatters = {};
   }
 
-  public format(response: any, formatOpt: IESXAggregationFormatter): any {
+  public format(response: any, formatOpt: IESXAggregationFormatter): DataDictionary {
     let context = {};
-    this._format(response.aggregations, context, formatOpt);
-    return context;
+    return this._format(response.aggregations, context, formatOpt);
   }
 
   /**
@@ -49,7 +49,7 @@ export class FormatterEngine {
     });
   }
 
-  private _format(data, context: any, formatOpt: IESXAggregationFormatter) {
+  private _format(data, context: any, formatOpt: IESXAggregationFormatter): DataDictionary {
     let formatter = this._findAggregationFormatter(formatOpt.aggregationName);
     let formatContexts = formatter.format(context, data, formatOpt);
 
@@ -66,8 +66,13 @@ export class FormatterEngine {
         this._format(formatContexts.subDataset[i][agg.field], subContext, agg);
       });
     });
+
+    return new DataDictionary(context, formatOpt, this);
   }
-  
+
+  public findAggregationFormatter(name: string) {
+    return this._findAggregationFormatter(name);
+  }
   
   /**
    * @param  {string} name formatter name

@@ -2,7 +2,7 @@ import { start } from '../../../dev/dev';
 export type HaltHandler = "AVG" | "IGNORE" | "VOID" | "ZERO";
 
 export interface IHaltHanlder {
-  (data: [any, any], index: number, context: Array<any>): [any, any];
+  (data: any[], index: number, context: Array<any>): any[];
 }
 
 export class HaltHandlerProvider {
@@ -22,7 +22,7 @@ export class HaltHandlerProvider {
     }
   }
 
-  public static processDataset(dataset: Array<[any, any]>, method: HaltHandler | IHaltHanlder) {
+  public static processDataset(dataset: Array<Array<any>>, method: HaltHandler | IHaltHanlder) {
     let _method: IHaltHanlder = typeof method === 'string' ?
       HaltHandlerProvider.getHandler(method) : method;
     
@@ -45,33 +45,39 @@ export class HaltHandlerProvider {
    * @return {[any, any]} new data
    * @desc get the average value of the nearest values before and after current index
    */
-  private static _averageHandler(data: [any, any], index: number, context: Array<any>): [any, any] {
-    let start = index,
-      end = index,
-      startVal = null,
-      endVal = null;
-    
-    while (start > 0) {
-      start--;
-      if (context[start][1] !== null) {
-        startVal = context[start][1];
-        break;
-      }
-    }
+  private static _averageHandler(data: [any, any], index: number, context: Array<any>): any[] {
 
-    while (end < context.length - 1) {
-      end++;
-      if (context[end][1] !== null) {
-        endVal = context[end][1];
-        break;
+    let result = [data[0]];
+    for (let i = 1; i < data.length; i++){
+      let start = index,
+        end = index,
+        startVal = null,
+        endVal = null;
+      
+      while (start > 0) {
+        start--;
+        if (context[start][i] !== null) {
+          startVal = context[start][i];
+          break;
+        }
       }
-    }
 
-    if (startVal === null || endVal === null) {
-      return undefined;
+      while (end < context.length - 1) {
+        end++;
+        if (context[end][i] !== null) {
+          endVal = context[end][i];
+          break;
+        }
+      }
+
+      if (startVal === null || endVal === null) {
+        return undefined;
+      }
+      result.push((startVal + endVal) / 2);
     }
     
-    return [data[0], (startVal + endVal) / 2];
+    
+    return result;
   }
 
   /**
@@ -81,7 +87,7 @@ export class HaltHandlerProvider {
    * @return {[any, any]} new data
    * @desc remove the value from array
    */
-  private static _ignoreHandler(data: [any, any], index: number, context: Array<any>): any {
+  private static _ignoreHandler(data: [any, any], index: number, context: Array<any>): any[] {
     return undefined;
   }
 
@@ -92,7 +98,7 @@ export class HaltHandlerProvider {
    * @return {[any, any]} new data
    * @desc no interrupt
    */  
-  private static _voidHandler(data: [any, any], index: number, context: Array<any>): [any, any] {
+  private static _voidHandler(data: [any, any], index: number, context: Array<any>): any[] {
     return data;
   }
 
@@ -103,7 +109,7 @@ export class HaltHandlerProvider {
    * @return {[any, any]} new data
    * @desc return zero value
    */  
-  private static _zeroHandler(data: [any, any], index: number, context: Array<any>): [any, any] {
+  private static _zeroHandler(data: [any, any], index: number, context: Array<any>): any[] {
     return [data[0], 0];
   }
 }

@@ -9,6 +9,7 @@ import { SeriesType, SeriesTypeNames } from './models/series-type.type';
 import { IKRYAxis, IKRChartSeries } from './interfaces/y-axis.interface';
 import { IAggFormatter } from '../formatter/models/aggregation-formatter/aggregation-formatter.annotation';
 import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
+import { DataDictionary } from '../formatter/models/data-dictionary.type';
 
 export interface IKRChartSettings {
     xAxis?: IKRAxis;
@@ -48,7 +49,7 @@ export class KRChartEngine {
   public render(
     target: HTMLDivElement,
     opts: IKRChartOptions,
-    data: any,
+    data: DataDictionary,
     formatter: IESXAggregationFormatter
   ): KRChartContainer {
 

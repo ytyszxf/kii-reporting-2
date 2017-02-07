@@ -17,6 +17,6 @@ describe('Formatter Engine', () => {
     let result = parser.parseQuery(sampleQuery1);
     let formattedData = formatterEngine.format(sampleResponse1, result);
 
-    expect(formattedData.byHour).toBeDefined;
+    expect(formattedData.raw['byHour']).toBeDefined;
   })
 });
