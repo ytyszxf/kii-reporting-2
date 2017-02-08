@@ -1,11 +1,12 @@
 import { IKRChartBindingOptions } from '../interfaces/chart-options.interface';
-import { IECSeriesOptions } from '../interfaces/series-options.interface';
+import { IECSeriesOptions } from '../interfaces/echarts-mapper/series-options.interface';
 import { SeriesType } from '../models/series-type.type';
 import { KRChartContainer } from '../chart-container.type';
 import { AggregationValueType } from '../../parser/models/aggregation-value-type.enum';
-import { IKRYAxis, IKRChartSeries } from '../interfaces/y-axis.interface';
 import { IHaltHanlder, HaltHandlerProvider } from '../models/halt-handler.type';
 import { DataDictionary } from '../../formatter/models/data-dictionary.type';
+import { IKRYAxis } from '../interfaces/y-axis.interface';
+import { IKRChartSeries } from '../interfaces/series.interface';
 
 export abstract class KRSeries {
 
@@ -13,6 +14,11 @@ export abstract class KRSeries {
    * @desc describes which type of chart this may handles
    */
   public static seriesTypes: SeriesType[];
+
+  /**
+   * @desc describes if series has axises;
+   */
+  public static hasAxises: boolean;
 
   /**
    * @desc echart compatable series settings

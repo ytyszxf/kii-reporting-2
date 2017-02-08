@@ -132,22 +132,24 @@ export class KRChartContainer {
     // **************************************************************
 
     // get axis
-    let formatterDataType = this._formatter
-      .children.find(f => f.field === this._xAxis.field).type;
-    let dataType: AggregationValueType = this._xAxis.options.type;
-    if (dataType === 'category') {
-      this._xAxis.data = this._dataDict.getBucketKeys(this._xAxis.field);
-      if (this._xAxis.options.formatter) {
-        let formatter = this._xAxis.options.formatter;
-        this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => formatter(d));
-      } else if (formatterDataType === 'time') {
-        this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => this._formateTimeData(d));
+    if (this._xAxis) {
+      let formatterDataType = this._formatter
+        .children.find(f => f.field === this._xAxis.field).type;
+      let dataType: AggregationValueType = this._xAxis.options.type;
+      if (dataType === 'category') {
+        this._xAxis.data = this._dataDict.getBucketKeys(this._xAxis.field);
+        if (this._xAxis.options.formatter) {
+          let formatter = this._xAxis.options.formatter;
+          this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => formatter(d));
+        } else if (formatterDataType === 'time') {
+          this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => this._formateTimeData(d));
+        }
       }
-    }
-    esOptions.xAxis = this._xAxis.options;
 
-    esOptions.yAxis = this._yAxises.map(y => y.options);
-    esOptions.color = this._colors;
+      this._xAxis && (esOptions.xAxis = this._xAxis.options);
+      this._yAxises.length && (esOptions.yAxis = this._yAxises.map(y => y.options));
+      esOptions.color = this._colors;
+    }
 
     // **************************************************************
 

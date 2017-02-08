@@ -1,9 +1,10 @@
 import { KRSeries } from './series.type';
 import { ChartSeries } from './series.annotation';
-import { IECSeriesOptions } from '../interfaces/series-options.interface';
+import { IECSeriesOptions } from '../interfaces/echarts-mapper/series-options.interface';
 import { SymbolName } from '../models/symbol-name.type';
-import { IKRYAxis, IKRChartSeries } from '../interfaces/y-axis.interface';
 import { SeriesType } from '../models/series-type.type';
+import { IKRChartSeries } from '../interfaces/series.interface';
+import { IKRYAxis } from '../interfaces/y-axis.interface';
 
 
 interface IECScatterOptions extends IECSeriesOptions{
@@ -20,7 +21,8 @@ interface IECScatterOptions extends IECSeriesOptions{
 }
 
 @ChartSeries({
-  seriesTypes: ['scatter', 'bubble']
+  seriesTypes: ['scatter', 'bubble'],
+    hasAxises: true
 })
 export class KRScatterSeries extends KRSeries {
 

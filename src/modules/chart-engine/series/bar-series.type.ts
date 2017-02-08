@@ -1,9 +1,10 @@
 import { KRSeries } from './series.type';
 import { ChartSeries } from './series.annotation';
-import { IECSeriesOptions } from '../interfaces/series-options.interface';
+import { IECSeriesOptions } from '../interfaces/echarts-mapper/series-options.interface';
 import { SymbolName } from '../models/symbol-name.type';
-import { IKRYAxis, IKRChartSeries } from '../interfaces/y-axis.interface';
 import { SeriesType } from '../models/series-type.type';
+import { IKRYAxis } from '../interfaces/y-axis.interface';
+import { IKRChartSeries } from '../interfaces/series.interface';
 
 interface IEBarOptions extends IECSeriesOptions{
   stack?: boolean;
@@ -19,7 +20,8 @@ interface IEBarOptions extends IECSeriesOptions{
 }
 
 @ChartSeries({
-  seriesTypes: ['bar']
+  seriesTypes: ['bar'],
+  hasAxises: true
 })
 export class KRBarSeries extends KRSeries {
 

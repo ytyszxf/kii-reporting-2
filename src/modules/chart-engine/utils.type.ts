@@ -1,6 +1,10 @@
 
 export class KRUtils {
 
+  public static deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
   public static mergeObj(source1: Object, source2: Object) {
     Object.keys(source2).forEach((key) => {
       if (!!source1[key] && KRUtils.isPrimitive(source1[key])) {

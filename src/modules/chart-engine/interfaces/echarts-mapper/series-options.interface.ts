@@ -1,4 +1,4 @@
-import { SeriesType } from '../models/series-type.type';
+import { SeriesType } from '../../models/series-type.type';
 
 export interface IECSeriesOptions {
   name?: string;

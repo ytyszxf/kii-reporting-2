@@ -2,10 +2,12 @@ import { IKRXAxis } from './x-axis.interface';
 import { IKRYAxis } from './y-axis.interface';
 import { IKRTextStyle } from './text-style.interface';
 import { IKRLegend } from './legend.interface';
+import { IKRChartSeries } from './series.interface';
 
 export interface IKRChartBindingOptions{
   x?: IKRXAxis;
   y?: IKRYAxis[] | IKRYAxis;
+  series?: IKRChartSeries | IKRChartSeries[];
 }
 
 export interface IKRChartOptions{

@@ -6,10 +6,12 @@ import { KRUtils } from './utils.type';
 import { KRChartContainer } from './chart-container.type';
 import { KRSeries } from './series/series.type';
 import { SeriesType, SeriesTypeNames } from './models/series-type.type';
-import { IKRYAxis, IKRChartSeries } from './interfaces/y-axis.interface';
 import { IAggFormatter } from '../formatter/models/aggregation-formatter/aggregation-formatter.annotation';
 import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
 import { DataDictionary } from '../formatter/models/data-dictionary.type';
+import { IKRYAxis } from './interfaces/y-axis.interface';
+import { IKRChartSeries } from './interfaces/series.interface';
+import { IKRXAxis } from './interfaces/x-axis.interface';
 
 export interface IKRChartSettings {
     xAxis?: IKRAxis;
@@ -39,6 +41,9 @@ export class KRChartEngine {
     return this._configSettings;
   }
 
+  /**
+   * @returns IKRChartSettings
+   */
   private get _settings() {
     let settings = {};
     KRUtils.mergeObj(settings, this._defaultSettings);
@@ -46,6 +51,14 @@ export class KRChartEngine {
     return settings;
   }
   
+  /**
+   * @param  {HTMLDivElement} target
+   * @param  {IKRChartOptions} opts
+   * @param  {DataDictionary} data
+   * @param  {IESXAggregationFormatter} formatter
+   * @returns KRChartContainer
+   * @desc render data and return a chart container instance
+   */
   public render(
     target: HTMLDivElement,
     opts: IKRChartOptions,
@@ -69,31 +82,40 @@ export class KRChartEngine {
      * }
      */
     if (opts.axises) {
-      chartContainer.addXAxis(opts.axises.x);
-      let ys: Array<IKRYAxis> = opts.axises.y instanceof Array
-        ? opts.axises.y : [opts.axises.y];
-      ys.forEach((y, yAxisIndex) => {
-        chartContainer.addYAxis(y);
-        let series: Array<IKRChartSeries> = y.series instanceof Array ?
-          y.series : [y.series];
-
-        series.forEach(s => {
-          let seriesType = this._findSeriesType(s.type);
-          let bindingOptions: IKRChartBindingOptions = {
-            x: opts.axises.x,
-            y: {
-              series: s
-            }
-          };
-
-          chartContainer.addSeries(s.type, seriesType, bindingOptions, yAxisIndex);
-        });
-      });
-      
+      this.updateChartContainer(chartContainer, opts.axises.x, opts.axises.y);
     } else {
-      SeriesTypeNames.forEach(typeName => {
-        
-      });
+      for (let seriesTypeName of SeriesTypeNames) {
+        if (!opts[seriesTypeName]) continue;
+
+        let seriesType = this._findSeriesType(<SeriesType>seriesTypeName);
+
+        let series: IKRChartBindingOptions = opts[seriesTypeName];
+        if (seriesType.hasAxises) {
+          let y = series.y instanceof Array ?
+            KRUtils.deepClone(series.y) : [KRUtils.deepClone(series.y)];
+
+          y.forEach(_y => {
+            if (_y.series instanceof Array) {
+              _y.series.forEach(s => {
+                s.type = <SeriesType>seriesTypeName;
+              })
+            } else {
+              _y.series.type = <SeriesType>seriesTypeName;
+            }
+          });
+          this.updateChartContainer(chartContainer, series.x, y);
+        } else {
+          let _series = series.series instanceof Array ?
+            series.series : [series.series];
+          
+          _series.forEach(_s => {
+            let opt: IKRChartBindingOptions = {
+              series: _s
+            };
+            chartContainer.addSeries(<SeriesType>seriesTypeName, seriesType, opt);
+          });
+        }
+      }
     }
 
     chartContainer.update(data, this._settings);    
@@ -101,10 +123,43 @@ export class KRChartEngine {
     return chartContainer;
   }
 
+  private updateChartContainer(chartContainer: KRChartContainer, x: IKRXAxis, y: IKRYAxis) {
+    let ys: Array<IKRYAxis> = y instanceof Array ? y : [y];
+    chartContainer.addXAxis(x);
+    ys.forEach((y, yAxisIndex) => {
+      chartContainer.addYAxis(y);
+      let series: Array<IKRChartSeries> = y.series instanceof Array ?
+        y.series : [y.series];
+
+      series.forEach(s => {
+        let seriesType = this._findSeriesType(s.type);
+        let bindingOptions: IKRChartBindingOptions = {
+          x: x,
+          y: {
+            series: s
+          }
+        };
+        chartContainer.addSeries(s.type, seriesType, bindingOptions, yAxisIndex);
+      });
+    });
+  }
+
+  private updateChartContainerWithoutAxis() {
+    
+  }
+
+  /**
+   * @param  {SeriesType} type
+   * @return {typeof KRSeries} description
+   */
   private _findSeriesType(type: SeriesType) {
     return this._seriesTypes[type];
   }
 
+  /**
+   * @param  {Array<typeofKRSeries>} seriesTypes
+   * @desc load series into chart engine
+   */
   private _loadSeriesTypes(seriesTypes: Array<typeof KRSeries>) {
     seriesTypes.forEach((t) => {
       t.seriesTypes.forEach((type) => {

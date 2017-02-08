@@ -9,7 +9,6 @@ import { sampleQueryTerms } from '../meta/mock/sample-query-terms';
 import { sampleResponseTerms } from '../meta/mock/sample-response-terms';
 import { KRLineSeries } from '../modules/chart-engine/series/line-series.type';
 import { IKRChartBindingOptions, IKRChartOptions } from '../modules/chart-engine/interfaces/chart-options.interface';
-import { IKRChartSeries, IKRYAxis } from '../modules/chart-engine/interfaces/y-axis.interface';
 import { KRChartContainer } from '../modules/chart-engine/chart-container.type';
 import * as createEditor from 'javascript-editor';
 import { IKRChartSettings } from '../modules/parser/models/chart-settings.interface';

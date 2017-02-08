@@ -1,9 +1,10 @@
 import { KRSeries } from './series.type';
 import { ChartSeries } from './series.annotation';
-import { IECSeriesOptions } from '../interfaces/series-options.interface';
+import { IECSeriesOptions } from '../interfaces/echarts-mapper/series-options.interface';
 import { SymbolName } from '../models/symbol-name.type';
-import { IKRYAxis, IKRChartSeries } from '../interfaces/y-axis.interface';
 import { SeriesType } from '../models/series-type.type';
+import { IKRYAxis } from '../interfaces/y-axis.interface';
+import { IKRChartSeries } from '../interfaces/series.interface';
 
 
 interface IECLineOptions extends IECSeriesOptions{
@@ -20,7 +21,8 @@ interface IECLineOptions extends IECSeriesOptions{
 }
 
 @ChartSeries({
-  seriesTypes: ['line', 'area']
+  seriesTypes: ['line', 'area'],
+  hasAxises: true
 })
 export class KRLineSeries extends KRSeries {
 
