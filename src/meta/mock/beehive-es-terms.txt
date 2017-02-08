@@ -4,22 +4,20 @@ var opts = {
   "chartOptions": {
     "axises": {
       "x": {
-        "field": "byTime",
+        "field": "Position",
         "options": {
-          "type": "category",
-          "name": "Time"
+          "name": "Position"
         }
       },
       "y": [
         {
           "series": [{
             "type": "bar",
-            "name": "A line",
-            "field": "byTime>position>CALC",
+            "field": "Position>CALC",
             "haltHandler": "AVG"
           }],
           "options": {
-            "name": "Brightness"
+            "name": "CO2"
           }
         }
       ]
@@ -49,24 +47,16 @@ var opts = {
       ]
     },
     "aggregation": {
-      "byTime": {
-        "date_histogram": {
-          "field": "state.date",
-          "interval": "3d"
-        },
+      "Position": {
         "aggs": {
-          "position": {
-            "aggs": {
-              "CALC": {
-                "avg": {
-                  "field": "state.CO2"
-                }
-              }
-            },
-            "terms": {
-              "field": "state.target"
+          "CALC": {
+            "avg": {
+              "field": "state.CO2"
             }
           }
+        },
+        "terms": {
+          "field": "state.target"
         }
       }
     }

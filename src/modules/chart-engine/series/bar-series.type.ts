@@ -5,7 +5,7 @@ import { SymbolName } from '../models/symbol-name.type';
 import { IKRYAxis, IKRChartSeries } from '../interfaces/y-axis.interface';
 import { SeriesType } from '../models/series-type.type';
 
-interface IECLineOptions extends IECSeriesOptions{
+interface IEBarOptions extends IECSeriesOptions{
   stack?: boolean;
   symbol?: SymbolName;
   symbolSize?: number;
@@ -28,13 +28,25 @@ export class KRBarSeries extends KRSeries {
     this._bindingOtions.x.options;
     let data = this.data;
 
-    let seriesOpt: IECLineOptions[] = [];
-    seriesOpt = data.map((d) => {
-      return this.buildOptions({
-        name: this.getName(d.path),
-        data: this._dataType === 'category' ? d.data.map(_d => _d[0]) : d.data
+    let seriesOpt: IEBarOptions[] = [];
+    if (this._options.split) {
+      data.forEach((d, i) => {
+        d.data.forEach(datum => {
+          seriesOpt.push(this.buildOptions({
+            name: this.getName(d.path),
+            data: this._dataType === 'category' ? [datum[1]] : [datum]
+          }));
+        });
       });
-    });
+    } else {
+      seriesOpt = data.map((d, i) => {
+        return this.buildOptions({
+          name: this.getName(d.path),
+          data: this._dataType === 'category' ? d.data.map(_d => _d[1]) : d.data
+        });
+      });
+    }
+    
 
     this._echartSeriesOptions = seriesOpt;
     console.log(this._echartSeriesOptions);
@@ -47,8 +59,8 @@ export class KRBarSeries extends KRSeries {
     return [series.field];
   }
 
-  private buildOptions(opts: IECLineOptions) {
-    let _opts: IECLineOptions  = {
+  private buildOptions(opts: IEBarOptions) {
+    let _opts: IEBarOptions  = {
       type: <SeriesType>'bar',
       showSymbol: this._options.showSymbol,
       stack: this._options.stack || this._seriesType === 'area' ? true : false,

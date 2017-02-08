@@ -44,7 +44,12 @@ export interface IKRChartSeries {
   /**
    * @desc bubbleSize bind field, only works for series: 'bubble';
    */
-  bubbleSize?: string;
+  symbolSizeField?: string;
+
+  /**
+   * @desc symbol size | function
+   */
+  symbolSize?: () => number | number;
 
   /**
    * @desc bubbleColor bind field, only works for series: 'bubble';
@@ -65,6 +70,12 @@ export interface IKRChartSeries {
    * @desc smooth
    */
   smooth?: boolean;
+
+  /**
+   * @desc only works for bar chart
+   * split bar chart series data into single items
+   */
+  split?: boolean;
 
 }
 

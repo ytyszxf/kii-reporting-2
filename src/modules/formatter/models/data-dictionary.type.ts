@@ -137,9 +137,9 @@ class SearchResult {
   ) { }
   
   public merge(result: SearchResult) {
-    if (this.data instanceof Array) {
-      (<Array<Array<any>>>this.data).forEach((d, i) => {
-        (<Array<any>>result.data[i])
+    if (DataDictionary.isFinal(this.data)) {
+      (<Array<Array<any>>>this.data.data).forEach((d, i) => {
+        (<Array<any>>result.data.data[i])
           .slice(1)
           .forEach((d1) => {
             d.push(d1);
@@ -149,10 +149,10 @@ class SearchResult {
       literate(this.data, result.data);
     }
 
-    function literate(o1: Object | Array<any>, o2: Object | Array<any>) {
-      if (o1 instanceof Array) {
-        (<Array<any>>o2).slice(1).forEach(d => {
-          o1.push(d);
+    function literate(o1: Object, o2: Object) {
+      if (DataDictionary.isFinal(o1)) {
+        (<Array<any>>o2['data']).slice(1).forEach(d => {
+          o1['data'].push(d);
         });
       } else {
         for (let key in (<Object>o1)) {

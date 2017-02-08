@@ -33,7 +33,7 @@ export class KRLineSeries extends KRSeries {
     seriesOpt = data.map((d) => {
       return this.buildOptions({
           name: this.getName(d.path),
-          data: this._dataType === 'category' ? d.data.map(_d => _d[0]) : d.data
+          data: this._dataType === 'category' ? d.data.map(_d => _d[1]) : d.data
         });
     });
 

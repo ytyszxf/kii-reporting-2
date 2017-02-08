@@ -110,6 +110,14 @@ export class HaltHandlerProvider {
    * @desc return zero value
    */  
   private static _zeroHandler(data: [any, any], index: number, context: Array<any>): any[] {
-    return [data[0], 0];
+    let result = [];
+    for (let i = 0; i < data.length; i++){
+      if (data[i] === undefined || data[i] === null) {
+        result.push(0);
+      } else {
+        result.push(data[i]);
+      }
+    }
+    return result;
   }
 }

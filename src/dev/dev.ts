@@ -96,70 +96,6 @@ function _executeQuery(chartQuery: IChartQuery) {
 
 function _prepareUI() {
 
-  var _opts: IKRChartSettings = {
-    chartOptions: {
-      axises: {
-        x: {
-          field: 'byHour',
-          options: {
-            name: "Time"
-          }
-        },
-        y: [{
-          series: {
-            type: 'line',
-            name: 'A line',
-            field: 'byHour>byType>avg_brightness'
-          },
-          options: {
-            name: "Brightness"
-          }
-        }]
-      }
-    },
-    chartQuery: {
-      "filter": {},
-      "aggregation": {
-        "byHour": {
-          "aggs": {
-            "byType": {
-              "terms": {
-                "field": "type"
-              },
-              "aggs": {
-                "avg_brightness": {
-                  "avg": {
-                    "field": "brightness"
-                  }
-                },
-                "sum_brightness": {
-                  "sum": {
-                    "field": "brightness"
-                  }
-                }
-              }
-            },
-            "avg_brightness": {
-              "avg": {
-                "field": "brightness"
-              }
-            },
-            "avg_power": {
-              "avg": {
-                "field": "power"
-              }
-            }
-          },
-           
-          "date_histogram": {
-            "field": "date",
-            "interval": "hour"
-          }
-        }
-      }
-    }
-  };
-
   return new Promise((resolve, reject) => {
     document.onreadystatechange = function () {
       let editor = createEditor({
@@ -174,8 +110,7 @@ function _prepareUI() {
         updateInterval: 500,
         dragAndDrop: true
       });
-      //editor.setValue(`var headers = {};\r\nvar url = 'http://localhost:9200/demo/_search';\r\nvar opts = ${JSON.stringify(_opts, null, 2)}`);
-      editor.setValue(require('../meta/mock/local-query.txt'));
+      editor.setValue(require('../meta/mock/scatter-beehive-query.txt'));
       resolve(editor);
     };
     

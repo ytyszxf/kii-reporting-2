@@ -138,7 +138,15 @@ export abstract class KRSeries {
   protected getData(bucket: string, metrics: string[]): {path: string[], data: Array<any>}[]{
 
     let haltHandler = this._options.haltHandler;
-    let result = this._dataDict.search(bucket, metrics[0]).data;
+    let searchResult = null;
+    for (let metric of metrics) {
+      if (!searchResult) {
+        searchResult = this._dataDict.search(bucket, metric);
+      } else {
+        searchResult.merge(this._dataDict.search(bucket, metric));
+      }
+    }
+    let result = searchResult.data;
 
     let output = DataDictionary.isFinal(result)? [result]: getFinalArrays([], result);
     output.forEach((ar) => {
