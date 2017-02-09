@@ -12,7 +12,6 @@ describe('base series', () => {
     let parser = new KRQueryParser();
     let result = parser.parseQuery(sampleQueryTerms);
     let formattedData = formatterEngine.format(sampleResponseTerms, result);
-    let lineSeries = new KRLineSeries({}, new KRChartContainer(document.getElementsByTagName('div')[0], null), 'line', 'value');
     
   });
 });

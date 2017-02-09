@@ -41,4 +41,15 @@ export interface IKRChartOptions{
    * text style settings
    */
   textStyle?: IKRTextStyle;
+  
+  /**
+   * visual map
+   */
+  visualMap?: any;
+
+  /**
+   * grid
+   */
+
+  grid?: any;
 }

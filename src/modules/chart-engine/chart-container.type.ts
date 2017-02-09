@@ -1,26 +1,24 @@
 import { ITEM_COLORS } from './settings/colors';
 import { SeriesType } from './models/series-type.type';
-import { IKRChartBindingOptions } from './interfaces/chart-options.interface';
+import { IKRChartBindingOptions, IKRChartOptions } from './interfaces/chart-options.interface';
 import { KRSeries } from './series/series.type';
 import { IKRChartSettings } from './chart-engine.type';
 import * as ECharts from 'echarts';
 import { IKRXAxis } from './interfaces/x-axis.interface';
 import { IKRYAxis } from './interfaces/y-axis.interface';
-import { KRXAxis } from './components/x-axis.type';
-import { KRYAxis } from './components/y-axis.type';
 import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
 import { AggregationValueType } from '../parser/models/aggregation-value-type.enum';
 import { DataDictionary } from '../formatter/models/data-dictionary.type';
 import { ChartDirection } from './models/chart-direction.type';
+import { IKRAxis } from './interfaces/axis.interface';
+import { KRUtils } from './utils.type';
+import { KRAxis } from './components/axis.type';
+import { IKRChartSeries } from './interfaces/series.interface';
 
 /**
  * @author george.lin ljz135790@gmail.com
  */
 export class KRChartContainer {
-  /**
-   * @desc pointer index of color pool
-   */
-  private _colorIndex: number;
 
   /**
    * @desc pointer index of symbol pool
@@ -58,6 +56,11 @@ export class KRChartContainer {
   private _chartSettings: IKRChartSettings;
 
   /**
+   * @desc chart Options
+   */
+  private _chartOptions: IKRChartOptions;
+
+  /**
    * @desc echart instance
    */
   private _echartInstance: ECharts.ECharts;
@@ -65,12 +68,12 @@ export class KRChartContainer {
   /**
    * @desc x axis
    */
-  private _xAxis: KRXAxis;
+  private _xAxises: KRAxis[];
 
   /**
    * @desc y axis array, upto 2
    */
-  private _yAxises: KRYAxis[];
+  private _yAxises: KRAxis[];
 
   /**
    * @desc formatter
@@ -82,51 +85,70 @@ export class KRChartContainer {
    */
   private _chartDirection: ChartDirection;
 
+  public get isVertical(): boolean{
+    return this._chartDirection === 'TopToBottom' || this._chartDirection === 'BottomToTop';
+  }
+
   public get series(): KRSeries[] {
     return this._series;
   }
 
+  public get independentAxis(): KRAxis[] {
+    return this.isVertical ?
+      this._xAxises : this._yAxises;
+  }
+
+  public get dependentAxis(): KRAxis[] {
+    return this.isVertical ?
+      this._yAxises : this._xAxises;
+  }
+
+  public get color() {
+    return this._colors;
+  }
+
   constructor(
     ele: HTMLDivElement,
-    formatter: IESXAggregationFormatter
+    formatter: IESXAggregationFormatter,
+    chartOptions: IKRChartOptions,
+    settings: IKRChartSettings,
   ) {
-    this._colorIndex = 0;
     this._symbolIndex = 0;
     this._colors = ITEM_COLORS;
     this._containerElement = ele;
+    this._xAxises = [];
     this._yAxises = [];
     this._series = [];
     this._formatter = formatter;
+    this._chartSettings = settings;
+    this._chartDirection = chartOptions.direction || 'BottomToTop';
+    this._chartOptions = chartOptions;
   }
 
   public update(
     dataDict: DataDictionary,
-    settings: IKRChartSettings,
-    direction: ChartDirection = 'BottomToTop'
   ) {
     this._dataDict = dataDict;
-    this._chartSettings = settings;
-    this._chartDirection = direction
     this.render();
   }
 
   public addSeries(typeName: SeriesType,
-    seriesType: typeof KRSeries, opts: IKRChartBindingOptions, yAxisGroupIndex?: number) {
+    seriesType: typeof KRSeries, seriesOpt: IKRChartSeries, yAxisGroupIndex?: number) {
     
     /**
      * @desc this class only helps to
      * add constrains for ts compiler
      */
-    class VirtualSeries extends KRSeries { protected _render() { }; protected get metrics() { return [];} }
+    class VirtualSeries extends KRSeries { protected _render() { }; protected get variables() { return null;} }
 
     let dataType = null;
 
-    if (this._xAxis) {
-      dataType = this._xAxis.options.type ||
-        this._formatter.children.find(f => f.field === this._xAxis.field).type;
+    if (this.independentAxis[0]) {
+      dataType = this.independentAxis[0].options.type ||
+        this._formatter.children.find(f => f.field === this.independentAxis[0].field).type;
     }
     
-    let series = new (<typeof VirtualSeries>seriesType)(opts, this, typeName, dataType, yAxisGroupIndex);
+    let series = new (<typeof VirtualSeries>seriesType)(this, typeName, dataType, seriesOpt, yAxisGroupIndex);
     this._series.push(series);
   }
 
@@ -150,22 +172,32 @@ export class KRChartContainer {
     // **************************************************************
 
     // get axis
-    if (this._xAxis) {
+    if (this.independentAxis.length) {
+      let independentAxisOptions = this.independentAxis[0];
       let formatterDataType = this._formatter
-        .children.find(f => f.field === this._xAxis.field).type;
-      let dataType: AggregationValueType = this._xAxis.options.type;
+        .children.find(f => f.field === this.independentAxis[0].field).type;
+      let dataType: AggregationValueType = this.independentAxis[0].options.type;
       if (dataType === 'category') {
-        this._xAxis.data = this._dataDict.getBucketKeys(this._xAxis.field);
-        if (this._xAxis.options.formatter) {
-          let formatter = this._xAxis.options.formatter;
-          this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => formatter(d));
+        independentAxisOptions.data = this._dataDict.getBucketKeys(this.independentAxis[0].field);
+        if (this.independentAxis[0].options.formatter) {
+          let formatter = this.independentAxis[0].options.formatter;
+          independentAxisOptions.data = (<Array<any>>independentAxisOptions.data).map(d => formatter(d));
         } else if (formatterDataType === 'time') {
-          this._xAxis.data = (<Array<any>>this._xAxis.data).map(d => this._formateTimeData(d));
+          independentAxisOptions.data = (<Array<any>>independentAxisOptions.data).map(d => this._formateTimeData(d));
         }
       }
 
-      this._xAxis && (esOptions.xAxis = this._xAxis.options);
-      this._yAxises.length && (esOptions.yAxis = this._yAxises.map(y => y.options));
+      let dependentAxisOtions = this.dependentAxis.map((axis) => {
+        return axis.options;
+      });
+
+      if (this._chartDirection === 'LeftToRight' || this._chartDirection === 'RightToLeft') {
+        esOptions.xAxis = dependentAxisOtions;
+        esOptions.yAxis = independentAxisOptions.options;
+      } else {
+        esOptions.xAxis = independentAxisOptions.options;
+        esOptions.yAxis = dependentAxisOtions;
+      }
     }
 
     // **************************************************************
@@ -182,7 +214,13 @@ export class KRChartContainer {
     // get data zoom
     // **************************************************************
 
-    console.log(esOptions);
+    // get visual map
+    esOptions.visualMap = this._chartOptions.visualMap;
+    // **************************************************************
+
+    // get grid
+    esOptions.grid = this._chartOptions.grid;
+    // **************************************************************
 
     this._echartInstance.setOption(esOptions);
   }
@@ -202,36 +240,50 @@ export class KRChartContainer {
    * @desc add X axis
    * @param  {IKRXAxis} xOpts
    */
-  public addXAxis(xOpts: IKRXAxis) {
-    this._addXAxis(xOpts);
+  public addXAxis(xOpts: IKRAxis) {
+    this._addXAxis([xOpts]);
   }
 
   /**
    * @desc add Y aixs
    * @param  {IKRYAxis} yOpts
    */
-  public addYAxis(yOpts: IKRYAxis) {
-    this._addYAxis(yOpts);
+  public addYAxis(yOpts: IKRAxis) {
+    this._addYAxis([yOpts]);
   }
 
   /**
    * @param  {IKRXAxis} xOpts
    */
-  private _addXAxis(xOpts: IKRXAxis) {
-
-    this._xAxis = new KRXAxis(xOpts);
-    let dataType: AggregationValueType = xOpts.options.type || this._formatter
-      .children.find(f => f.field === xOpts.field)
-      .type;
-    
-    this._xAxis.setOptions({ type: dataType });
+  private _addXAxis(opts: IKRAxis[]) {
+    opts.forEach((opt, i) => {
+      let xAxis = new KRAxis(opt);
+      this._xAxises.push(xAxis);
+      if (this.isVertical) {
+        let dataType: AggregationValueType = opt.options.type || this._formatter
+          .children.find(f => f.field === opt.field)
+          .type;
+        
+        xAxis.setOptions({ type: dataType });
+      }
+    });
   }
 
   /**
    * @param  {IKRYAxis} yOpts
    */
-  private _addYAxis(yOpts: IKRYAxis) {
-    this._yAxises.push(new KRYAxis(yOpts));
+  private _addYAxis(opts: IKRAxis[]) {
+    opts.forEach((opt, i) => {
+      let yAxis = new KRAxis(opt);
+      this._yAxises.push(yAxis);
+      if (!this.isVertical) {
+        let dataType: AggregationValueType = opt.options.type || this._formatter
+          .children.find(f => f.field === opt.field)
+          .type;
+        
+        yAxis.setOptions({ type: dataType });
+      }
+    });
   }
 
   private _formateTimeData(date) {

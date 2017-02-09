@@ -5,6 +5,7 @@ import { SymbolName } from '../models/symbol-name.type';
 import { SeriesType } from '../models/series-type.type';
 import { IKRChartSeries } from '../interfaces/series.interface';
 import { IKRYAxis } from '../interfaces/y-axis.interface';
+import { ISeriesVariables } from '../interfaces/series-variable.interface';
 
 
 interface IECScatterOptions extends IECSeriesOptions{
@@ -12,6 +13,7 @@ interface IECScatterOptions extends IECSeriesOptions{
   symbol?: SymbolName;
   symbolSize?: number | Function;
   showSymbol?: boolean;
+  xAxisIndex?: number;
   yAxisIndex?: number;
   areaStyle?: {
     normal?: {
@@ -55,15 +57,15 @@ export class KRScatterSeries extends KRSeries {
     console.log(this._echartSeriesOptions);
   }
 
-  protected get metrics() {
-    let x = this._bindingOtions.x;
-    let y = <IKRYAxis>this._bindingOtions.y;
-    let series = <IKRChartSeries>y.series;
-    let result = [series.field]
-    if (this._options.symbolSizeField) {
-      result.push(this._options.symbolSizeField);
+  protected get variables(): ISeriesVariables {
+    let variables: ISeriesVariables = {
+      independentVar: this._chartContainer.independentAxis[0].field,
+      dependentVar: [this._seriesOptions.field]
+    };
+    if (this._seriesOptions.symbolSizeField) {
+      variables.dependentVar.push(this._options.symbolSizeField);
     }
-    return result;
+    return variables;
   }
 
   private buildOptions(opts: IECScatterOptions) {
@@ -91,8 +93,12 @@ export class KRScatterSeries extends KRSeries {
       } : symbolSize
     };
 
-    if (this._yAxisIndex !== undefined) {
-      _opts.yAxisIndex = this._yAxisIndex;
+    if (this._axisIndex !== undefined) {
+      if (this._isVertical) {
+        _opts.yAxisIndex = this._axisIndex;
+      } else {
+        _opts.xAxisIndex = this._axisIndex;
+      }
     }
 
     Object.assign(_opts, opts);

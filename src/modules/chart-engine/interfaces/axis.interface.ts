@@ -1,5 +1,6 @@
 import { IKRTextStyle } from './text-style.interface';
 import { IKRLineStyle } from './line-style.interface';
+import { IKRChartSeries } from './series.interface';
 
 export interface IKRAxisLine{
   show?: boolean;
@@ -52,5 +53,6 @@ export interface IKRAxisOptions {
 
 export interface IKRAxis {
   options?: IKRAxisOptions;
-  
+  field?: string;
+  series?: IKRChartSeries | IKRChartSeries[];
 }

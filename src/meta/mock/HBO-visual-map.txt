@@ -4,15 +4,38 @@ var headers = {
 var url = 'http://121.199.7.69:9200/7b581540/_search';
 var opts = {
   "chartOptions": {
-    "direction": "LeftToRight",
+    "grid": {
+      "right": 80
+    },
+    "visualMap": {
+        type: 'continuous',
+        dimension: 1,
+        text: ['High', 'Low'],
+        itemHeight: 200,
+        calculable: true,
+        min: 100,
+        max: 600,
+        top: 60,
+        right: 10,
+        inRange: {
+            colorLightness: [0.8, 0.2]
+        },
+        outOfRange: {
+            color: '#000'
+        },
+        controller: {
+            inRange: {
+                color: '#ffa976'
+            }
+        }
+    },
     "axises": {
-      "y": {
+      "x": {
         "field": "Location",
         "options": {
           "interval": 6 * 60 * 60 * 1000,
           "name": "",
           "axisLabel": {
-            inside: true,
             textStyle: {
               color: "#000"
             }
@@ -27,16 +50,14 @@ var opts = {
           }
         }
       },
-      "x": [
+      "y": [
         {
           "series": {
             "type": "bar",
             "field": "Location>MD",
             "haltHandler": "ZERO",
-            "split": true,
             "label": {
               "normal": {
-                "show": true,
                 "formatter": "{c}kwh",
                 "position": "insideRight"
               }
@@ -55,11 +76,9 @@ var opts = {
             },
             "axisLine": {
               "lineStyle": {
-                "width": 0
+                "width": 1,
+                color: "#999"
               }
-            },
-            "axisLabel":{
-              show: false
             },
             "axisTick": {
               show: false

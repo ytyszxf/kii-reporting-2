@@ -14,25 +14,32 @@ import * as createEditor from 'javascript-editor';
 import { IKRChartSettings } from '../modules/parser/models/chart-settings.interface';
 import { IESFilter } from '../modules/formatter/interfaces/es/es-filter.interface';
 import { Http, RequestMethod } from './http';
+import * as $ from 'jquery';
 
 declare var editorResult: IKRChartSettings;
 declare var editorUrl: string;
 declare var editorHeaders: Object;
+var toolTip = document.getElementById('toolTip');
+toolTip.remove();
 
 export function start() {
   _prepareUI().then((editor: any) => {
     updateConsole('Ready to go.');
     document.getElementById('btn-run').addEventListener('click', () => {
-      let value = `
-        ${editor.getValue()}
+      try {
+        let value = `
+          ${editor.getValue()}
 
-        window.editorResult = opts;
-        window.editorUrl = url;
-        window.editorHeaders = headers;
-      `;
-      eval(value);
-      _execute(editorResult);
-      console.log(editorResult);
+          window.editorResult = opts;
+          window.editorUrl = url;
+          window.editorHeaders = headers;
+        `;
+        eval(value);
+        _execute(editorResult);
+        console.log(editorResult);
+      } catch (e) {
+        showTip((<Error>e).message);
+      }
     });
   });
 }
@@ -46,16 +53,22 @@ function _execute(opts: IKRChartSettings) {
   _executeQuery(opts.chartQuery)
     .subscribe((response) => {
       updateConsole('rendering graph...');
-      let startTime = new Date().getTime();
-      let parser = new KRQueryParser();
-      let formatter = parser.parseQuery(opts.chartQuery);
-      let dataDict = formatterEngine.format(response, formatter);
-      console.log(dataDict);
-      let target = <HTMLDivElement>document.getElementById('target');
-      chartEngine.render(target, opts.chartOptions, dataDict, formatter);
-      let endTime = new Date().getTime();
-      let msg = `Done. Time consumption: ${(endTime - startTime) / 1000}s`;
-      updateConsole(msg);
+      
+      try {
+        let startTime = new Date().getTime();
+        let parser = new KRQueryParser();
+        let formatter = parser.parseQuery(opts.chartQuery);
+        let dataDict = formatterEngine.format(response, formatter);
+        console.log(dataDict);
+        let target = <HTMLDivElement>document.getElementById('target');
+        chartEngine.render(target, opts.chartOptions, dataDict, formatter);
+        let endTime = new Date().getTime();
+        let msg = `Done. Time consumption: ${(endTime - startTime) / 1000}s`;
+        updateConsole(msg);
+      } catch (e){
+        showTip((<Error>e).message);
+      }
+      
     });
 }
 
@@ -122,5 +135,14 @@ function _prepareUI() {
     let styleTag = document.createElement('style');
     styleTag.innerHTML = style;
     header.appendChild(styleTag);
+  });
+}
+
+function showTip(msg: string) {
+  let body: HTMLBodyElement = document.getElementsByTagName('body')[0];
+  let node = body.appendChild(toolTip);
+  $('.tool-tip .message').text(msg);
+  $('.tool-tip button').click(() => {
+    (<HTMLDivElement>node).remove();
   });
 }

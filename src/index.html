@@ -67,6 +67,37 @@
       border:solid 1px #ccc;
       overflow: auto;
     }
+
+    .tool-tip {
+      position: fixed;
+      width: 300px;
+      left: 50%;
+      top: 30%;
+    }
+    .tool-tip .tool-tip-content {
+      transform: translate(-50%, -50%);
+      width: 100%;
+      border-radius: 5px;
+      height: 100%;
+      position: relative;
+      background: #333;
+      box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
+      min-height: 100px;
+    }
+    .tool-tip .tool-tip-content .btn-hide {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      background: transparent;
+      border: none;
+      color: #fff;
+    }
+    .tool-tip .tool-tip-content .message{
+      color: #fff;
+      font-size: 13px;
+      padding: 20px 10px;
+    }
+
   </style>
 </head>
 
@@ -88,6 +119,16 @@
        Loading...
     </div>
   </app>
+
+  <div style="display: none;">
+    <div id="toolTip" class="tool-tip">
+      <div class="tool-tip-content">
+        <button class="btn-hide">X</button>
+        <div class="message">This is a message</div>
+      </div>
+    </div>
+  </div>
+  
 
   <% if (htmlWebpackPlugin.options.metadata.isDevServer && htmlWebpackPlugin.options.metadata.HMR !== true) { %>
   <!-- Webpack Dev Server reload -->

@@ -1,7 +1,7 @@
 import { IKRXAxis } from '../interfaces/x-axis.interface';
 import { IKRAxisOptions } from '../interfaces/axis.interface';
 
-export class KRXAxis {
+export class KRAxis {
   private _options: IKRXAxis;
 
   constructor(opts: IKRXAxis) {

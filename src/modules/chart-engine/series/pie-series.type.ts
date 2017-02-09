@@ -5,6 +5,7 @@ import { SymbolName } from '../models/symbol-name.type';
 import { SeriesType } from '../models/series-type.type';
 import { IKRYAxis } from '../interfaces/y-axis.interface';
 import { IKRChartSeries } from '../interfaces/series.interface';
+import { ISeriesVariables } from '../interfaces/series-variable.interface';
 
 
 interface IECPieOptions extends IECSeriesOptions{
@@ -37,9 +38,11 @@ export class KRPieSeries extends KRSeries {
     console.log(this._echartSeriesOptions);
   }
 
-  protected get metrics() {
-    let series = <IKRChartSeries>this._bindingOtions.series;
-    return [series.field];
+  protected get variables(): ISeriesVariables {
+    return {
+      independentVar: this._seriesOptions.field.split('>')[0],
+      dependentVar: [this._seriesOptions.field]
+    };
   }
 
   private buildOptions(opts: IECPieOptions) {

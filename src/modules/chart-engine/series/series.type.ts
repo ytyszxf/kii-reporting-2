@@ -40,7 +40,7 @@ export abstract class KRSeries {
   /**
    * @desc y axis index
    */
-  protected _yAxisIndex: number;
+  protected _axisIndex: number;
 
   /**
    * @desc series type that called.
@@ -86,6 +86,10 @@ export abstract class KRSeries {
     return this._seriesOptions;
   }
 
+  protected get _isVertical(): boolean {
+    return this._chartContainer.isVertical;
+  }
+
   /**
    * @param  {IKRChartBindingOptions} bindingOptions
    * @param  {any} dataset
@@ -94,16 +98,16 @@ export abstract class KRSeries {
     chartContainer: KRChartContainer,
     seriesType: SeriesType,
     dataType: AggregationValueType,
-    variables: ISeriesVariables,
     seriesOptions: IKRChartSeries,
-    yAxisIndex?: number,
+    axisIndex?: number,
     dataset?: any,
   ) {
     this._dataDict = dataset;
     this._seriesType = seriesType;
     this._chartContainer = chartContainer;
-    this._yAxisIndex = yAxisIndex;
+    this._axisIndex = axisIndex;
     this._dataType = dataType;
+    this._seriesOptions = seriesOptions;
   }
 
   /**
@@ -127,12 +131,13 @@ export abstract class KRSeries {
    */
   protected abstract _render(): void;
 
-  protected abstract get metrics(): string[];
+  protected abstract get variables(): ISeriesVariables;
   
   protected get data() {
-    if (!this.metrics.length) throw new Error('No metrics given.');
+    let variables = this.variables;
+    if (!variables.dependentVar.length) throw new Error('No metrics given.');
     if (this._options.field) {
-      return this.getData(this._variables.independentVar, this.metrics);
+      return this.getData(variables);
     }else if (this._options.script){
       return this.renderScript();
     } else {
@@ -145,7 +150,9 @@ export abstract class KRSeries {
    * @param  {string} bucket
    * @param  {string|string[]} metrics
    */
-  protected getData(bucket: string, metrics: string[]): { path: string[], data: Array<any> }[] {
+  protected getData(variables: ISeriesVariables): { path: string[], data: Array<any> }[] {
+    let metrics = variables.dependentVar,
+      bucket = variables.independentVar;  
 
     let haltHandler = this._options.haltHandler;
     let searchResult = null;
@@ -207,7 +214,7 @@ export abstract class KRSeries {
       throw new Error('context is required by script method.');
 
     let contexts: {path: string[], data: any[]}[][] = this._options.context.map(field => {
-      return this.getData(this._variables.independentVar, [field]);
+      return this.getData(this._variables);
     });
 
     let context = contexts[0];

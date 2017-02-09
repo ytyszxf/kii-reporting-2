@@ -5,6 +5,7 @@ import { SymbolName } from '../models/symbol-name.type';
 import { SeriesType } from '../models/series-type.type';
 import { IKRYAxis } from '../interfaces/y-axis.interface';
 import { IKRChartSeries } from '../interfaces/series.interface';
+import { ISeriesVariables } from '../interfaces/series-variable.interface';
 
 
 interface IECLineOptions extends IECSeriesOptions{
@@ -13,6 +14,7 @@ interface IECLineOptions extends IECSeriesOptions{
   symbolSize?: number;
   showSymbol?: boolean;
   yAxisIndex?: number;
+  xAxisIndex?: number;
   areaStyle?: {
     normal?: {
       color?: string;
@@ -42,10 +44,11 @@ export class KRLineSeries extends KRSeries {
     console.log(this._echartSeriesOptions);
   }
 
-  protected get metrics() {
-    let y = <IKRYAxis>this._bindingOtions.y;
-    let series = <IKRChartSeries>y.series;
-    return [series.field];
+  protected get variables(): ISeriesVariables {
+    return {
+      independentVar: this._chartContainer.independentAxis[0].field,
+      dependentVar: [this._seriesOptions.field]
+    };
   }
 
   private buildOptions(opts: IECLineOptions) {
@@ -55,8 +58,12 @@ export class KRLineSeries extends KRSeries {
       stack: this._options.stack || this._seriesType === 'area' ? true : false,
     };
 
-    if (this._yAxisIndex !== undefined) {
-      _opts.yAxisIndex = this._yAxisIndex;
+    if (this._axisIndex !== undefined) {
+      if (this._isVertical) {
+        _opts.yAxisIndex = this._axisIndex;
+      } else {
+        _opts.xAxisIndex = this._axisIndex;
+      }
     }
 
     if (this._seriesType === 'area') {
