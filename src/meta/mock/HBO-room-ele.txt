@@ -1,0 +1,91 @@
+var headers = {
+  "authorization": "Bearer super_token"
+};
+var url = 'http://121.199.7.69:9200/7b581540/_search';
+var opts = {
+  "chartOptions": {
+    "direction": "LeftToRight",
+    "axises": {
+      "y": {
+        "field": "Location",
+        "options": {
+          "interval": 6 * 60 * 60 * 1000,
+          "name": "",
+          "axisLabel": {
+            inside: true
+          },
+          "axisLine": {
+            "lineStyle": {
+              "width": 0
+            }
+          },
+          "axisTick": {
+            show: false
+          }
+        }
+      },
+      "x": [
+        {
+          "series": {
+            "type": "bar",
+            "field": "Location>MD",
+            "haltHandler": "ZERO",
+            "label": {
+              "normal": {
+                "show": true,
+                "formatter": "{b}: {c}",
+                "position": "inside"
+              }
+            }
+          },
+          "options": {
+            "splitLine": {
+              "lineStyle": {
+                "type": "dashed"
+              }
+            },
+            "axisLine": {
+              "lineStyle": {
+                "width": 0
+              }
+            },
+            "axisLabel":{
+              show: false
+            },
+            "axisTick": {
+              show: false
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chartQuery": {
+    "filter": {
+      "must": [{
+      	"range": {
+          "timeStamp": {
+            "gte": 1485705600000,
+            "lte": 1485792000000 + 60 * 60 * 1 * 1000,
+            "format": "epoch_millis"
+          }
+        }
+      }]
+    },
+    "aggregation": {
+      "Location": {
+        "terms": {
+          "field": "fields._stringField2"
+        },
+        "aggs": {
+          "MD": {
+            "sum": {
+              "field": "state.activeTotalChange"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+      

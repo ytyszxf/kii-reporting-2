@@ -14,10 +14,10 @@ import { IKRChartSeries } from './interfaces/series.interface';
 import { IKRXAxis } from './interfaces/x-axis.interface';
 
 export interface IKRChartSettings {
-    xAxis?: IKRAxis;
-    yAxis?: IKRAxis;
-    legend?: IKRLegend;
-    textStyle?: IKRTextStyle;
+  xAxis?: IKRAxis;
+  yAxis?: IKRAxis;
+  legend?: IKRLegend;
+  textStyle?: IKRTextStyle;
 };
 
 export class KRChartEngine {
@@ -66,6 +66,8 @@ export class KRChartEngine {
     formatter: IESXAggregationFormatter
   ): KRChartContainer {
 
+    if (!this.validateInputJSON(opts)) throw new Error('input not valid');
+
     let chartContainer = new KRChartContainer(target, formatter);
 
     /**
@@ -81,8 +83,17 @@ export class KRChartEngine {
      *   }
      * }
      */
+
     if (opts.axises) {
-      this.updateChartContainer(chartContainer, opts.axises.x, opts.axises.y);
+      let x, y;
+      if (opts.direction === 'LeftToRight' || opts.direction === 'RightToLeft') {
+        x = opts.axises.y;
+        y = opts.axises.x;
+      } else {
+        x = opts.axises.x;
+        y = opts.axises.y;
+      }
+      this.updateChartContainer(chartContainer, x, y);
     } else {
       for (let seriesTypeName of SeriesTypeNames) {
         if (!opts[seriesTypeName]) continue;
@@ -108,17 +119,12 @@ export class KRChartEngine {
           let _series = series.series instanceof Array ?
             series.series : [series.series];
           
-          _series.forEach(_s => {
-            let opt: IKRChartBindingOptions = {
-              series: _s
-            };
-            chartContainer.addSeries(<SeriesType>seriesTypeName, seriesType, opt);
-          });
+          this.updateChartContainerWithoutAxis(chartContainer, _series, <SeriesType>seriesTypeName);
         }
       }
     }
 
-    chartContainer.update(data, this._settings);    
+    chartContainer.update(data, this._settings, opts.direction);
     
     return chartContainer;
   }
@@ -137,15 +143,33 @@ export class KRChartEngine {
           x: x,
           y: {
             series: s
-          }
+          },
+          rootField: x.field
         };
         chartContainer.addSeries(s.type, seriesType, bindingOptions, yAxisIndex);
       });
     });
   }
 
-  private updateChartContainerWithoutAxis() {
-    
+  private updateChartContainerWithoutAxis(
+    chartContainer: KRChartContainer,
+    series: IKRChartSeries[],
+    seriesTypeName: SeriesType
+  ) {
+    let seriesType = this._findSeriesType(seriesTypeName);
+    series.forEach(_s => {
+      let s = KRUtils.deepClone(_s);
+      s.type = seriesTypeName;
+      let opt: IKRChartBindingOptions = {
+        series: s,
+        rootField: _s.field.split('>')[0]
+      };
+      chartContainer.addSeries(seriesTypeName, seriesType, opt);
+    });
+  }
+
+  private validateInputJSON(input: IKRChartOptions) {
+    return true;
   }
 
   /**

@@ -11,6 +11,7 @@ import { KRYAxis } from './components/y-axis.type';
 import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
 import { AggregationValueType } from '../parser/models/aggregation-value-type.enum';
 import { DataDictionary } from '../formatter/models/data-dictionary.type';
+import { ChartDirection } from './models/chart-direction.type';
 
 /**
  * @author george.lin ljz135790@gmail.com
@@ -76,6 +77,14 @@ export class KRChartContainer {
    */
   private _formatter: IESXAggregationFormatter;
 
+  /**
+   * @desc chart direction
+   */
+  private _chartDirection: ChartDirection;
+
+  public get series(): KRSeries[] {
+    return this._series;
+  }
 
   constructor(
     ele: HTMLDivElement,
@@ -90,9 +99,14 @@ export class KRChartContainer {
     this._formatter = formatter;
   }
 
-  public update(dataDict: DataDictionary, settings: IKRChartSettings) {
+  public update(
+    dataDict: DataDictionary,
+    settings: IKRChartSettings,
+    direction: ChartDirection = 'BottomToTop'
+  ) {
     this._dataDict = dataDict;
     this._chartSettings = settings;
+    this._chartDirection = direction
     this.render();
   }
 
@@ -105,9 +119,12 @@ export class KRChartContainer {
      */
     class VirtualSeries extends KRSeries { protected _render() { }; protected get metrics() { return [];} }
 
-    let dataType =
-      this._xAxis.options.type ||
-      this._formatter.children.find(f => f.field === this._xAxis.field).type;
+    let dataType = null;
+
+    if (this._xAxis) {
+      dataType = this._xAxis.options.type ||
+        this._formatter.children.find(f => f.field === this._xAxis.field).type;
+    }
     
     let series = new (<typeof VirtualSeries>seriesType)(opts, this, typeName, dataType, yAxisGroupIndex);
     this._series.push(series);
@@ -128,7 +145,8 @@ export class KRChartContainer {
     });
 
     esOptions.series = series;
-
+    esOptions.color = this._colors;
+    
     // **************************************************************
 
     // get axis
@@ -148,7 +166,6 @@ export class KRChartContainer {
 
       this._xAxis && (esOptions.xAxis = this._xAxis.options);
       this._yAxises.length && (esOptions.yAxis = this._yAxises.map(y => y.options));
-      esOptions.color = this._colors;
     }
 
     // **************************************************************

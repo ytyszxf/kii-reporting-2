@@ -1,0 +1,50 @@
+var headers = {"Authorization": "Bearer super_token"};
+var url = 'http://121.199.7.69:9200/493e83c9/_search';
+var opts = {
+  "chartOptions": {
+    "pie": {
+    	"series": [{
+        "field": "Position>CALC"
+      }]
+    }
+  },
+  "chartQuery": {
+    "filter": {
+    	"must_not": [],
+      "must": [
+        {
+          "terms": {
+            "state.target": [
+              "th.f83120e36100-870b-6e11-b1d8-026da82a",
+              "th.f83120e36100-870b-6e11-b1d8-034dff1a"
+            ]
+          }
+        },
+        {
+          "range": {
+            "state.date": {
+              "gte": 1454406685000,
+              "lte": 1486115485121,
+              "format": "epoch_millis"
+            }
+          }
+        }
+      ]
+    },
+    "aggregation": {
+      "Position": {
+        "aggs": {
+          "CALC": {
+            "sum": {
+              "field": "state.CO2"
+            }
+          }
+        },
+        "terms": {
+          "field": "state.target"
+        }
+      }
+    }
+  }
+}
+      

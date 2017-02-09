@@ -75,4 +75,15 @@ export interface IKRChartSeries {
    */
   split?: boolean;
 
+  /**
+   * @desc pie charts only
+   * radius of pie
+   */
+  radius?: [any, any];
+
+  /**
+   * @desc bar chart item label settings
+   */
+  label?: any;
+
 }

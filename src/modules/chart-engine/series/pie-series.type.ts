@@ -8,16 +8,7 @@ import { IKRChartSeries } from '../interfaces/series.interface';
 
 
 interface IECPieOptions extends IECSeriesOptions{
-  stack?: boolean;
-  symbol?: SymbolName;
-  symbolSize?: number;
-  showSymbol?: boolean;
-  yAxisIndex?: number;
-  areaStyle?: {
-    normal?: {
-      color?: string;
-    }
-  }
+  radius?: any[];
 }
 
 @ChartSeries({
@@ -28,25 +19,26 @@ export class KRPieSeries extends KRSeries {
 
   protected _render() {
     
-    this._bindingOtions.x.options;
     let data = this.data;
-
-    let seriesOpt: IECPieOptions[] = [];
-    seriesOpt = data.map((d) => {
-      return this.buildOptions({
-        name: this.getName(d.path),
-        data: d.data.map(_d => _d[1])
+    let mergeData: { path: string[]; data: any }[] = [];
+    data.forEach((d) => {
+      d.data.forEach((_d) => {
+        mergeData.push({ path: d.path, data: _d });
       });
     });
+
+    let seriesOpt: IECPieOptions[] = [this.buildOptions({
+      data: mergeData.map(_d => {
+        return { name: _d.data[0]+ '-' + this.getName(_d.path), value: _d.data[1] };
+      })
+    })];
 
     this._echartSeriesOptions = seriesOpt;
     console.log(this._echartSeriesOptions);
   }
 
   protected get metrics() {
-    let x = this._bindingOtions.x;
-    let y = <IKRYAxis>this._bindingOtions.y;
-    let series = <IKRChartSeries>y.series;
+    let series = <IKRChartSeries>this._bindingOtions.series;
     return [series.field];
   }
 
@@ -55,9 +47,21 @@ export class KRPieSeries extends KRSeries {
       type: <SeriesType>'pie',
     };
 
+    if (this._options.radius) {
+      this.putProperty(_opts, this._options, 'radius'); 
+    } else {
+      _opts.radius = [
+        [["0%", "80%"]],
+        [["0%", "50%"], ["60%", "80%"]],
+        [["0", "40%"], ["48%", "62%"], ["70%", "80%"]]
+      ][this._chartContainer.series.length - 1][this._chartContainer.series.indexOf(this)]
+    }
+
     Object.assign(_opts, opts);
 
     return _opts;
   }
+
+  getSize
   
 }

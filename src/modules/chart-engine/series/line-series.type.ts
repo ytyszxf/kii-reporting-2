@@ -28,7 +28,6 @@ export class KRLineSeries extends KRSeries {
 
   protected _render() {
     
-    this._bindingOtions.x.options;
     let data = this.data;
 
     let seriesOpt: IECLineOptions[] = [];
@@ -44,7 +43,6 @@ export class KRLineSeries extends KRSeries {
   }
 
   protected get metrics() {
-    let x = this._bindingOtions.x;
     let y = <IKRYAxis>this._bindingOtions.y;
     let series = <IKRChartSeries>y.series;
     return [series.field];

@@ -30,7 +30,6 @@ export class KRScatterSeries extends KRSeries {
 
   protected _render() {
     
-    this._bindingOtions.x.options;
     let data = this.data;
     this.data.forEach(d => {
       d.data.forEach(_d => {

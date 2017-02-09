@@ -7,6 +7,8 @@ import { IHaltHanlder, HaltHandlerProvider } from '../models/halt-handler.type';
 import { DataDictionary } from '../../formatter/models/data-dictionary.type';
 import { IKRYAxis } from '../interfaces/y-axis.interface';
 import { IKRChartSeries } from '../interfaces/series.interface';
+import { IKRXAxis } from '../interfaces/x-axis.interface';
+import { ISeriesVariables } from '../interfaces/series-variable.interface';
 
 export abstract class KRSeries {
 
@@ -31,11 +33,6 @@ export abstract class KRSeries {
   protected _chartContainer: KRChartContainer;
 
   /**
-   * @desc input options that used to generate output
-   */
-  protected _bindingOtions: IKRChartBindingOptions;
-
-  /**
    * @desc input dataset that used to generate output
    */
   protected _dataDict: DataDictionary;
@@ -55,11 +52,19 @@ export abstract class KRSeries {
    */
   protected _dataType: AggregationValueType;
 
+  /**
+   * @desc series variables
+   */
+  protected _variables: ISeriesVariables;
+
+  /**
+   * @desc series options
+   */
+  protected _seriesOptions: IKRChartSeries;
+
   protected getName(path: string[] = []): string {
-    if (!this._options.name) return null;
     if (typeof this._options.name === 'string') {
       return this._options.name;
-      
     } else if (this._options.name instanceof Function) {
       return (<Function>this._options.name).apply(this, [path]);
     }
@@ -77,10 +82,8 @@ export abstract class KRSeries {
   /**
    * 
    */
-  protected get _options() {
-    let x = this._bindingOtions.x;
-    let y = <IKRYAxis>this._bindingOtions.y;
-    return <IKRChartSeries>y.series;;
+  protected get _options(): IKRChartSeries {
+    return this._seriesOptions;
   }
 
   /**
@@ -88,14 +91,14 @@ export abstract class KRSeries {
    * @param  {any} dataset
    */
   constructor(
-    bindingOptions: IKRChartBindingOptions,
     chartContainer: KRChartContainer,
     seriesType: SeriesType,
     dataType: AggregationValueType,
+    variables: ISeriesVariables,
+    seriesOptions: IKRChartSeries,
     yAxisIndex?: number,
     dataset?: any,
   ) {
-    this._bindingOtions = bindingOptions;
     this._dataDict = dataset;
     this._seriesType = seriesType;
     this._chartContainer = chartContainer;
@@ -127,8 +130,9 @@ export abstract class KRSeries {
   protected abstract get metrics(): string[];
   
   protected get data() {
+    if (!this.metrics.length) throw new Error('No metrics given.');
     if (this._options.field) {
-      return this.getData(this._bindingOtions.x.field, this.metrics);
+      return this.getData(this._variables.independentVar, this.metrics);
     }else if (this._options.script){
       return this.renderScript();
     } else {
@@ -141,7 +145,7 @@ export abstract class KRSeries {
    * @param  {string} bucket
    * @param  {string|string[]} metrics
    */
-  protected getData(bucket: string, metrics: string[]): {path: string[], data: Array<any>}[]{
+  protected getData(bucket: string, metrics: string[]): { path: string[], data: Array<any> }[] {
 
     let haltHandler = this._options.haltHandler;
     let searchResult = null;
@@ -154,7 +158,7 @@ export abstract class KRSeries {
     }
     let result = searchResult.data;
 
-    let output = DataDictionary.isFinal(result)? [result]: getFinalArrays([], result);
+    let output = DataDictionary.isFinal(result) ? [result] : getFinalArrays([], result);
     output.forEach((ar) => {
       HaltHandlerProvider.processDataset(ar.data, haltHandler);
     });
@@ -203,7 +207,7 @@ export abstract class KRSeries {
       throw new Error('context is required by script method.');
 
     let contexts: {path: string[], data: any[]}[][] = this._options.context.map(field => {
-      return this.getData(this._bindingOtions.x.field, [field]);
+      return this.getData(this._variables.independentVar, [field]);
     });
 
     let context = contexts[0];

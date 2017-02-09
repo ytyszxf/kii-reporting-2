@@ -1,0 +1,34 @@
+var headers = {};
+var url = 'http://localhost:9200/demo/_search';
+var opts = {
+  "chartOptions": {
+    "pie": {
+      series: [{
+        field: "byType>avg_brightness"
+      }]
+    }
+  },
+  "chartQuery": {
+    "filter": {},
+    "aggregation": {
+      "byType": {
+        "terms": {
+          "field": "type"
+        },
+        "aggs": {
+          "avg_brightness": {
+            "avg": {
+              "field": "brightness"
+            }
+          },
+          "sum_brightness": {
+            "sum": {
+              "field": "brightness"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+      

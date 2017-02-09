@@ -6,17 +6,20 @@ import { SeriesType } from '../models/series-type.type';
 import { IKRYAxis } from '../interfaces/y-axis.interface';
 import { IKRChartSeries } from '../interfaces/series.interface';
 
-interface IEBarOptions extends IECSeriesOptions{
+interface IEBarOptions extends IECSeriesOptions {
   stack?: boolean;
-  symbol?: SymbolName;
-  symbolSize?: number;
-  showSymbol?: boolean;
   yAxisIndex?: number;
   areaStyle?: {
     normal?: {
       color?: string;
     }
   }
+  label?: {
+    normal?: {
+      show?: boolean;
+      formatter?: string | Function;
+    }
+  },
 }
 
 @ChartSeries({
@@ -27,16 +30,15 @@ export class KRBarSeries extends KRSeries {
 
   protected _render() {
     
-    this._bindingOtions.x.options;
     let data = this.data;
 
     let seriesOpt: IEBarOptions[] = [];
     if (this._options.split) {
       data.forEach((d, i) => {
-        d.data.forEach(datum => {
+        d.data.forEach((datum, j) => {
           seriesOpt.push(this.buildOptions({
             name: this.getName(d.path),
-            data: this._dataType === 'category' ? [datum[1]] : [datum]
+            data: this._dataType === 'category' ? [[j, datum[1]]] : [datum]
           }));
         });
       });
@@ -55,7 +57,6 @@ export class KRBarSeries extends KRSeries {
   }
 
   protected get metrics() {
-    let x = this._bindingOtions.x;
     let y = <IKRYAxis>this._bindingOtions.y;
     let series = <IKRChartSeries>y.series;
     return [series.field];
@@ -64,7 +65,6 @@ export class KRBarSeries extends KRSeries {
   private buildOptions(opts: IEBarOptions) {
     let _opts: IEBarOptions  = {
       type: <SeriesType>'bar',
-      showSymbol: this._options.showSymbol,
       stack: this._options.stack || this._seriesType === 'area' ? true : false,
     };
 
@@ -75,6 +75,7 @@ export class KRBarSeries extends KRSeries {
     this.putProperty(_opts, this._options, 'showSymbol');
     this.putProperty(_opts, this._options, 'smooth');
     this.putProperty(_opts, this._options, 'stack');
+    this.putProperty(_opts, this._options, 'label')
     Object.assign(_opts, opts);
 
     return _opts;
