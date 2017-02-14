@@ -1,7 +1,7 @@
 ## Kii-Reporting Framework
-![image](https://cloud.githubusercontent.com/assets/8529214/22919168/32949b30-f2c9-11e6-9a44-e629f1dfb8b9.png)
-![image](https://cloud.githubusercontent.com/assets/8529214/22919171/360152e0-f2c9-11e6-8ba8-6322f448392f.png)
-![image](https://cloud.githubusercontent.com/assets/8529214/22919146/0a76b5b6-f2c9-11e6-9d19-0684b7bc4d92.png)
+![image](https://cloud.githubusercontent.com/assets/8529214/22919593/aa2f4580-f2cb-11e6-8aba-e929c7f0e9db.png)
+
+
 
 ### Description
 Kii Reporting Framework is designed to be a Elastic Search compatable and query-view schema based reporting charts renderer. The main advantages are:
