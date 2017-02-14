@@ -130,7 +130,7 @@ export class DataDictionary {
   }
 }
 
-class SearchResult {
+export class SearchResult {
 
   constructor(
     public data

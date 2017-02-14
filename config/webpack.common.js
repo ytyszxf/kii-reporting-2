@@ -81,7 +81,7 @@ module.exports = function (options) {
         {
           test: /\.ts$/,
           use: [
-            'awesome-typescript-loader?{configFileName: "tsconfig.prod.json"}'
+            'awesome-typescript-loader?{configFileName: "tsconfig.json"}'
           ],
           exclude: [/\.(spec|e2e)\.ts$/]
         },

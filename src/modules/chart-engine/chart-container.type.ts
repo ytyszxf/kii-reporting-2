@@ -148,7 +148,7 @@ export class KRChartContainer {
         this._formatter.children.find(f => f.field === this.independentAxis[0].field).type;
     }
     
-    let series = new (<typeof VirtualSeries>seriesType)(this, typeName, dataType, seriesOpt, yAxisGroupIndex);
+    let series = new (<typeof VirtualSeries>seriesType)(this, typeName, <AggregationValueType>dataType, seriesOpt, yAxisGroupIndex);
     this._series.push(series);
   }
 
