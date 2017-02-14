@@ -1,6 +1,6 @@
 {
   "name": "kii-reporting-2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "kii reporting framework",
   "main": "dist/index.js",
   "typings": "./dist/index.d.ts",
