@@ -3,10 +3,17 @@
   "description": "kii reporting framework",
   "main": "dist/index.bundle.js",
   "authors": [
-    "george.lin@kii.com"
+    "george.lin@kii.com",
+    "ljz135790@gmail.com"
   ],
   "license": "MIT",
   "keywords": [
+    "Elastic Search compatable",
+    "line",
+    "bar",
+    "pie",
+    "scatter",
+    "charts",
     "reporting",
     "visualization"
   ],

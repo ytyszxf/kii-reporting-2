@@ -35,3 +35,8 @@ if (window) {
   window['KRChartEngine'] = KRChartEngine;
   window['KRQueryParser'] = KRQueryParser;
 }
+
+export * from './modules/chart-engine/chart-container.type';
+export * from './bootstrap';
+export * from './modules/chart-engine/chart-engine.type';
+export * from './modules/parser/models/query-parser.type';
