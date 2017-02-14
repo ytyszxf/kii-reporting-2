@@ -11,115 +11,49 @@ Kii Reporting Framework is designed to be a Elastic Search compatable and query-
 - Intuitive JSON data structure.
 
 ```javascript
+// a simple pie chart schema
 var opts = {
   "chartOptions": {
-    "grid": {
-      "right": 80
-    },
-    "visualMap": {
-        type: 'continuous',
-        dimension: 1,
-        text: ['High', 'Low'],
-        itemHeight: 200,
-        calculable: true,
-        min: 100,
-        max: 600,
-        top: 60,
-        right: 10,
-        inRange: {
-            colorLightness: [0.8, 0.2]
-        },
-        outOfRange: {
-            color: '#000'
-        },
-        controller: {
-            inRange: {
-                color: '#ffa976'
-            }
-        }
-    },
-    "axises": {
-      "x": {
-        "field": "Location",
-        "options": {
-          "interval": 6 * 60 * 60 * 1000,
-          "name": "",
-          "axisLabel": {
-            textStyle: {
-              color: "#000"
-            }
-          },
-          "axisLine": {
-            "lineStyle": {
-              "width": 0
-            }
-          },
-          "axisTick": {
-            show: false
-          }
-        }
-      },
-      "y": [
-        {
-          "series": {
-            "type": "bar",
-            "field": "Location>MD",
-            "haltHandler": "ZERO",
-            "label": {
-              "normal": {
-                "formatter": "{c}kwh",
-                "position": "insideRight"
-              }
-            },
-            "itemStyle": {
-              "normal": {
-                "opacity": 0.8
-              }
-            }
-          },
-          "options": {
-            "splitLine": {
-              "lineStyle": {
-                "type": "dashed"
-              }
-            },
-            "axisLine": {
-              "lineStyle": {
-                "width": 1,
-                color: "#999"
-              }
-            },
-            "axisTick": {
-              show: false
-            }
-          }
-        }
-      ]
+    "pie": {
+    	"series": [{
+        "field": "Position>CALC"
+      }]
     }
   },
   "chartQuery": {
     "filter": {
-      "must": [{
-        "range": {
-          "timeStamp": {
-            "gte": 1485705600000,
-            "lte": 1485792000000 + 60 * 60 * 1 * 1000,
-            "format": "epoch_millis"
+    	"must_not": [],
+      "must": [
+        {
+          "terms": {
+            "state.target": [
+              "th.f83120e36100-870b-6e11-b1d8-026da82a",
+              "th.f83120e36100-870b-6e11-b1d8-034dff1a"
+            ]
           }
-        }
-      }]
-    },
-    "aggregation": {
-      "Location": {
-        "terms": {
-          "field": "fields._stringField2"
         },
-        "aggs": {
-          "MD": {
-            "sum": {
-              "field": "state.activeTotalChange"
+        {
+          "range": {
+            "state.date": {
+              "gte": 1454406685000,
+              "lte": 1486115485121,
+              "format": "epoch_millis"
             }
           }
+        }
+      ]
+    },
+    "aggregation": {
+      "Position": {
+        "aggs": {
+          "CALC": {
+            "sum": {
+              "field": "state.CO2"
+            }
+          }
+        },
+        "terms": {
+          "field": "state.target"
         }
       }
     }
