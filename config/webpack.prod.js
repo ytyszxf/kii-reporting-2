@@ -31,7 +31,10 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
 });
 
 module.exports = function (env) {
-  return webpackMerge(commonConfig({env: ENV}), {
+  return webpackMerge(commonConfig({ env: ENV }), {
+    entry: {
+      index: './src/index.ts'
+    },
 
     /**
      * Developer tool to enhance debugging

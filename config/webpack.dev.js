@@ -37,8 +37,10 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = function (options) {
-  return webpackMerge(commonConfig({env: ENV}), {
-
+  return webpackMerge(commonConfig({ env: ENV }), {
+    entry: {
+      index: './dev/index.ts'
+    },
     /**
      * Developer tool to enhance debugging
      *

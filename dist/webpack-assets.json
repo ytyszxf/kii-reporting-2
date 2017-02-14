@@ -1,8 +1,5 @@
 {
   "index": {
     "js": "index.bundle.js"
-  },
-  "vendor": {
-    "js": "vendor.bundle.js"
   }
 }

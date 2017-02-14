@@ -17,21 +17,16 @@ import 'core-js/es6/weak-map';
 import 'core-js/es6/weak-set';
 import 'core-js/es6/typed';
 import 'core-js/es6/reflect';
-// import 'core-js/es6/promise';
 
 import 'core-js/es7/reflect';
 
 // Typescript emit helpers polyfill
 import 'ts-helpers';
-import { start } from './dev/dev';
-import { KRChartContainer } from './modules/chart-engine/chart-container.type';
-import { bootstrap } from './bootstrap';
-import { KRChartEngine } from './modules/chart-engine/chart-engine.type';
-import { KRQueryParser } from './modules/parser/models/query-parser.type';
+import { start } from './dev';
 
-if (window) {
-  window['KRChartContainer'] = KRChartContainer;
-  window['bootstrap'] = bootstrap;
-  window['KRChartEngine'] = KRChartEngine;
-  window['KRQueryParser'] = KRQueryParser;
+
+export function main() {
+  start();
 }
+
+main();

@@ -1,18 +1,17 @@
-import { main } from '../index';
-import { IChartQuery } from '../modules/formatter/interfaces/chart-query.interface';
-import { KRQueryParser } from '../modules/parser/models/query-parser.type';
-import { sampleQuery1 } from '../meta/mock/sample-query-1';
-import { KRDateHistogramFormatter } from '../modules/formatter/models/aggregation-formatter/date-histogram-formatter.type';
-import { sampleResponse1 } from '../meta/mock/sample-response-1';
-import { bootstrap } from '../bootstrap';
-import { sampleQueryTerms } from '../meta/mock/sample-query-terms';
-import { sampleResponseTerms } from '../meta/mock/sample-response-terms';
-import { KRLineSeries } from '../modules/chart-engine/series/line-series.type';
-import { IKRChartBindingOptions, IKRChartOptions } from '../modules/chart-engine/interfaces/chart-options.interface';
-import { KRChartContainer } from '../modules/chart-engine/chart-container.type';
+import { IChartQuery } from '../src/modules/formatter/interfaces/chart-query.interface';
+import { KRQueryParser } from '../src/modules/parser/models/query-parser.type';
+import { sampleQuery1 } from './meta/mock/sample-query-1';
+import { KRDateHistogramFormatter } from '../src/modules/formatter/models/aggregation-formatter/date-histogram-formatter.type';
+import { sampleResponse1 } from './meta/mock/sample-response-1';
+import { bootstrap } from '../src/bootstrap';
+import { sampleQueryTerms } from './meta/mock/sample-query-terms';
+import { sampleResponseTerms } from './meta/mock/sample-response-terms';
+import { KRLineSeries } from '../src/modules/chart-engine/series/line-series.type';
+import { IKRChartBindingOptions, IKRChartOptions } from '../src/modules/chart-engine/interfaces/chart-options.interface';
+import { KRChartContainer } from '../src/modules/chart-engine/chart-container.type';
 import * as createEditor from 'javascript-editor';
-import { IKRChartSettings } from '../modules/parser/models/chart-settings.interface';
-import { IESFilter } from '../modules/formatter/interfaces/es/es-filter.interface';
+import { IKRChartSettings } from '../src/modules/parser/models/chart-settings.interface';
+import { IESFilter } from '../src/modules/formatter/interfaces/es/es-filter.interface';
 import { Http, RequestMethod } from './http';
 import * as $ from 'jquery';
 
@@ -122,7 +121,7 @@ function _prepareUI() {
         updateInterval: 500,
         dragAndDrop: true
       });
-      editor.setValue(require('../meta/mock/scatter-beehive-query.txt'));
+      editor.setValue(require('./meta/mock/scatter-beehive-query.txt'));
       resolve(editor);
     };
     

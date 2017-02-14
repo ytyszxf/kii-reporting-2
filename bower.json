@@ -1,0 +1,21 @@
+{
+  "name": "kii-reporting-2",
+  "description": "kii reporting framework",
+  "main": "dist/index.bundle.js",
+  "authors": [
+    "george.lin@kii.com"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "reporting",
+    "visualization"
+  ],
+  "homepage": "https://github.com/ytyszxf/kii-reporting-2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
