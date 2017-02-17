@@ -208,6 +208,7 @@ export class KRChartContainer {
     
 
     // get legend
+    esOptions.legend = this._chartOptions.legend;
     // **************************************************************
     
 
@@ -221,6 +222,8 @@ export class KRChartContainer {
     // get grid
     esOptions.grid = this._chartOptions.grid;
     // **************************************************************
+
+    console.log(esOptions);
 
     this._echartInstance.setOption(esOptions);
   }

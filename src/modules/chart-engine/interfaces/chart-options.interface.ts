@@ -35,7 +35,7 @@ export interface IKRChartOptions{
   /**
    * @desc legends settings
    */
-  legends?: IKRLegend[];
+  legend?: IKRLegend;
 
   /**
    * text style settings

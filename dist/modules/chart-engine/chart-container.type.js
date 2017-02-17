@@ -135,6 +135,7 @@ var KRChartContainer = (function () {
         // get tooltip
         // **************************************************************
         // get legend
+        esOptions.legend = this._chartOptions.legend;
         // **************************************************************
         // get data zoom
         // **************************************************************
@@ -144,6 +145,7 @@ var KRChartContainer = (function () {
         // get grid
         esOptions.grid = this._chartOptions.grid;
         // **************************************************************
+        console.log(esOptions);
         this._echartInstance.setOption(esOptions);
     };
     /**
