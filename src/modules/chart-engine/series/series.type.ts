@@ -213,8 +213,14 @@ export abstract class KRSeries {
     if (!this._options.context || !this._options.context.length)
       throw new Error('context is required by script method.');
 
-    let contexts: {path: string[], data: any[]}[][] = this._options.context.map(field => {
-      return this.getData(this._variables);
+    // let contexts: {path: string[], data: any[]}[][] = this._options.context.map(field => {
+    //   return this.getData(this._variables);
+    // });
+
+    let contexts: { path: string[], data: any[] }[][] = this._options.context.map(field => {
+      let variables = this.variables;
+      variables.dependentVar = [field];
+      return this.getData(variables);
     });
 
     let context = contexts[0];

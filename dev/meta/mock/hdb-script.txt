@@ -1,0 +1,98 @@
+var headers = {"Authorization": "Bearer super_token"};
+var url = 'http://121.199.7.69:9200/7b581540/_search';
+var opts = {
+  "chartOptions": {
+    "legend": {
+      "data": ["Kitchen", "Bedroom 2", "Livingroom", "Study", "Bedroom 3"],
+    },
+    "axises": {
+      "x": {
+        "field": "byTime",
+        "options": {
+          "interval": 6 * 60 * 60 * 1000,
+          "max": '',
+          "min": '',
+          "position": "bottom",
+          "name": "",
+          "axisLine": {
+            "lineStyle": {
+              "width": 0
+            }
+          },
+          "axisTick": {
+            show: false
+          }
+        }
+      },
+      "y": [{
+        "series": {
+          "type": "line",
+          "field": "byTime>Location>MD",
+          "haltHandler": "ZERO",
+          "smooth": true,
+          //"script": function(path, MD){
+            // MD.forEach(function(o, i){
+            //   o[1] = o[1].toFixed(1);
+            // });
+           // return MD;
+          //}
+        },
+        "options": {
+          "name": "",
+          "splitLine": {
+            "lineStyle": {
+              "type": "dashed"
+            }
+          },
+          "axisLine": {
+            "lineStyle": {
+              "width": 0
+            }
+          },
+          "axisLabel": {
+            show: true
+          },
+          "axisTick": {
+            show: true
+          }
+        }
+      }]
+    }
+  },
+  "chartQuery": {
+    "filter": {
+      "must": [{
+        "range": {
+          "timeStamp": {
+            "gte": 1487646518209,
+            "lte": 1487647418209 + 60 * 60 * 1 * 1000,
+            "format": "epoch_millis"
+          }
+        }
+      }]
+    },
+    "aggregation": {
+      "byTime": {
+        "aggs": {
+          "Location": {
+            "terms": {
+              "field": "fields._stringField2"
+            },
+            "aggs": {
+              "MD": {
+                "sum": {
+                  "field": "state.activeTotalChange"
+                }
+              }
+            }
+          }
+        },
+        "date_histogram": {
+          field: "timeStamp",
+          interval: "15m",
+          "time_zone": "+08:00"
+        }
+      }
+    }
+  }
+}
