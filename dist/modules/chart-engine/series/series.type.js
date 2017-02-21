@@ -154,8 +154,13 @@ var KRSeries = (function () {
         var _this = this;
         if (!this._options.context || !this._options.context.length)
             throw new Error('context is required by script method.');
+        // let contexts: {path: string[], data: any[]}[][] = this._options.context.map(field => {
+        //   return this.getData(this._variables);
+        // });
         var contexts = this._options.context.map(function (field) {
-            return _this.getData(_this._variables);
+            var variables = _this.variables;
+            variables.dependentVar = [field];
+            return _this.getData(variables);
         });
         var context = contexts[0];
         return context.map(function (d, i) {
