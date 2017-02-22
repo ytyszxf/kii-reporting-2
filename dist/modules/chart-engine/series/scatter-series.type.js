@@ -10,6 +10,7 @@ var KRScatterSeries = (function (_super) {
     KRScatterSeries.prototype._render = function () {
         var _this = this;
         var data = this.data;
+        this.names = [];
         this.data.forEach(function (d) {
             d.data.forEach(function (_d) {
                 if (_d[2] === null || _d[2] === undefined)
@@ -23,8 +24,10 @@ var KRScatterSeries = (function (_super) {
         }
         var seriesOpt = [];
         seriesOpt = data.map(function (d) {
+            var name = _this.getName(d.path);
+            _this.names.indexOf(name) === -1 && _this.names.push(name);
             return _this.buildOptions({
-                name: _this.getName(d.path),
+                name: name,
                 data: _this._dataType === 'category' ? d.data.map(function (_d) { return _d[1]; }) : d.data
             });
         });
@@ -80,7 +83,8 @@ var KRScatterSeries = (function (_super) {
     KRScatterSeries = __decorate([
         series_annotation_1.ChartSeries({
             seriesTypes: ['scatter', 'bubble'],
-            hasAxises: true
+            hasAxises: true,
+            defaultTrigger: 'item'
         }), 
         __metadata('design:paramtypes', [])
     ], KRScatterSeries);

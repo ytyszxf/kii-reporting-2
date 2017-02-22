@@ -29,6 +29,9 @@ var KRUtils = (function () {
             obj instanceof Number || obj === Number ||
             obj instanceof Boolean || obj === Boolean);
     };
+    KRUtils.notEmpty = function (val) {
+        return val !== undefined && val != null;
+    };
     return KRUtils;
 }());
 exports.KRUtils = KRUtils;

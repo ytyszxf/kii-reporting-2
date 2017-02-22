@@ -24,7 +24,8 @@ interface IECScatterOptions extends IECSeriesOptions{
 
 @ChartSeries({
   seriesTypes: ['scatter', 'bubble'],
-    hasAxises: true
+  hasAxises: true,
+  defaultTrigger: 'item'
 })
 export class KRScatterSeries extends KRSeries {
 
@@ -33,6 +34,7 @@ export class KRScatterSeries extends KRSeries {
   protected _render() {
     
     let data = this.data;
+    this.names = [];
     this.data.forEach(d => {
       d.data.forEach(_d => {
         if (_d[2] === null || _d[2] === undefined) return;
@@ -47,8 +49,10 @@ export class KRScatterSeries extends KRSeries {
 
     let seriesOpt: IECScatterOptions[] = [];
     seriesOpt = data.map((d) => {
+      let name = this.getName(d.path);
+      this.names.indexOf(name) === -1 && this.names.push(name);
       return this.buildOptions({
-        name: this.getName(d.path),
+        name: name,
         data: this._dataType === 'category' ? d.data.map(_d => _d[1]) : d.data
       });
     });

@@ -5,6 +5,7 @@ import { AggregationValueType } from '../../parser/models/aggregation-value-type
 import { DataDictionary } from '../../formatter/models/data-dictionary.type';
 import { IKRChartSeries } from '../interfaces/series.interface';
 import { ISeriesVariables } from '../interfaces/series-variable.interface';
+import { TriggerType } from '../interfaces/trigger.type';
 export declare abstract class KRSeries {
     /**
      * @desc describes which type of chart this may handles
@@ -14,6 +15,18 @@ export declare abstract class KRSeries {
      * @desc describes if series has axises;
      */
     static hasAxises: boolean;
+    /**
+     * @desc trigger default trigger
+     */
+    static defaultTrigger: TriggerType;
+    /**
+     * @desc series names
+     */
+    names: string[];
+    /**
+     * @desc id
+     */
+    id: string | number;
     /**
      * @desc echart compatable series settings
      */

@@ -29,4 +29,8 @@ export class KRUtils {
       obj instanceof Number || obj === Number ||
       obj instanceof Boolean || obj === Boolean);
   }
+
+  public static notEmpty(val) {
+    return val !== undefined && val != null;
+  }
 }

@@ -9,11 +9,14 @@ var KRLineSeries = (function (_super) {
     KRLineSeries.prototype._render = function () {
         var _this = this;
         var data = this.data;
+        this.names = [];
         var seriesOpt = [];
         seriesOpt = data.map(function (d) {
+            var name = _this.getName(d.path), data = _this._dataType === 'category' ? d.data.map(function (_d) { return _d[1]; }) : d.data;
+            _this.names.indexOf(name) === -1 && _this.names.push(name);
             return _this.buildOptions({
-                name: _this.getName(d.path),
-                data: _this._dataType === 'category' ? d.data.map(function (_d) { return _d[1]; }) : d.data
+                name: name,
+                data: data
             });
         });
         this._echartSeriesOptions = seriesOpt;
@@ -56,7 +59,8 @@ var KRLineSeries = (function (_super) {
     KRLineSeries = __decorate([
         series_annotation_1.ChartSeries({
             seriesTypes: ['line', 'area'],
-            hasAxises: true
+            hasAxises: true,
+            defaultTrigger: 'axis'
         }), 
         __metadata('design:paramtypes', [])
     ], KRLineSeries);

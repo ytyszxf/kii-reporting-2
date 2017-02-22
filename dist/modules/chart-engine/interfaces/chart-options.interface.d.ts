@@ -4,6 +4,7 @@ import { IKRTextStyle } from './text-style.interface';
 import { IKRLegend } from './legend.interface';
 import { IKRChartSeries } from './series.interface';
 import { ChartDirection } from '../models/chart-direction.type';
+import { IKRToolTip } from './tooltip.interface';
 export interface IKRChartBindingOptions {
     x?: IKRXAxis[] | IKRXAxis;
     y?: IKRYAxis[] | IKRYAxis;
@@ -40,7 +41,11 @@ export interface IKRChartOptions {
      */
     visualMap?: any;
     /**
-     * grid
+     * @desc grid
      */
     grid?: any;
+    /**
+     * @desc tooltip
+     */
+    tooltip: IKRToolTip;
 }

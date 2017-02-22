@@ -20,4 +20,6 @@ export interface IKRLegend {
   selected?: { [seriesName: string]: boolean };
   textStyle?: IKRTextStyle;
   backgroundColor?: string; // default: transparent;
+  bind?: Array<string> | string;
+  data?: string[];
 }

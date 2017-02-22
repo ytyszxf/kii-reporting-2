@@ -14,7 +14,8 @@ interface IECPieOptions extends IECSeriesOptions{
 
 @ChartSeries({
   seriesTypes: ['pie'],
-  hasAxises: false
+  hasAxises: false,
+  defaultTrigger: 'item'
 })
 export class KRPieSeries extends KRSeries {
 
@@ -22,6 +23,7 @@ export class KRPieSeries extends KRSeries {
     
     let data = this.data;
     let mergeData: { path: string[]; data: any }[] = [];
+    this.names = [];
     data.forEach((d) => {
       d.data.forEach((_d) => {
         mergeData.push({ path: d.path, data: _d });
@@ -30,7 +32,10 @@ export class KRPieSeries extends KRSeries {
 
     let seriesOpt: IECPieOptions[] = [this.buildOptions({
       data: mergeData.map(_d => {
-        return { name: _d.data[0]+ '-' + this.getName(_d.path), value: _d.data[1] };
+        let name = _d.data[0] + '-' + this.getName(_d.path);
+        this.names.indexOf(name) === -1 && this.names.push(name);
+
+        return { name: name, value: _d.data[1] };
       })
     })];
 

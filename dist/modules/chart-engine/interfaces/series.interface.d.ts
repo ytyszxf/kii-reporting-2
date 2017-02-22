@@ -70,4 +70,8 @@ export interface IKRChartSeries {
      * @desc bar chart item label settings
      */
     label?: any;
+    /**
+     * @desc series id
+     */
+    id: string | number;
 }

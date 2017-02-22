@@ -55,6 +55,8 @@ export declare class KRChartContainer {
      * @desc y axis array, upto 2
      */
     private _yAxises;
+    private _legend;
+    private _tooltip;
     /**
      * @desc formatter
      */
@@ -87,6 +89,7 @@ export declare class KRChartContainer {
      * @param  {IKRYAxis} yOpts
      */
     addYAxis(yOpts: IKRAxis): void;
+    getSeries(): KRSeries[];
     /**
      * @param  {IKRXAxis} xOpts
      */

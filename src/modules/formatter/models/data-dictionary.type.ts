@@ -103,7 +103,7 @@ export class DataDictionary {
     let rootPath = root.split('>');
     let _dataRoot = this.data;
     for (let i = 0; i < rootPath.length - 1; i++){
-      _dataRoot = this.data[rootPath[i]][path[i]];
+      _dataRoot = _dataRoot[rootPath[i]][path[i]];
     }
     return _dataRoot[rootPath[rootPath.length - 1]];
   }

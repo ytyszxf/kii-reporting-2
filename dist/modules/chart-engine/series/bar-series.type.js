@@ -10,6 +10,7 @@ var KRBarSeries = (function (_super) {
         var _this = this;
         var data = this.data;
         var seriesOpt = [];
+        this.names = [];
         seriesOpt = data.map(function (d, i) {
             var data;
             if (_this._dataType === 'category') {
@@ -35,8 +36,10 @@ var KRBarSeries = (function (_super) {
                     };
                 });
             }
+            var name = _this.getName(d.path);
+            _this.names.indexOf(name) === -1 && _this.names.push(name);
             return _this.buildOptions({
-                name: _this.getName(d.path),
+                name: name,
                 data: data
             });
         });
@@ -77,7 +80,8 @@ var KRBarSeries = (function (_super) {
     KRBarSeries = __decorate([
         series_annotation_1.ChartSeries({
             seriesTypes: ['bar'],
-            hasAxises: true
+            hasAxises: true,
+            defaultTrigger: 'item'
         }), 
         __metadata('design:paramtypes', [])
     ], KRBarSeries);

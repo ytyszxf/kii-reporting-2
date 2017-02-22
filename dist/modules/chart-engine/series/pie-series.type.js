@@ -10,6 +10,7 @@ var KRPieSeries = (function (_super) {
         var _this = this;
         var data = this.data;
         var mergeData = [];
+        this.names = [];
         data.forEach(function (d) {
             d.data.forEach(function (_d) {
                 mergeData.push({ path: d.path, data: _d });
@@ -17,7 +18,9 @@ var KRPieSeries = (function (_super) {
         });
         var seriesOpt = [this.buildOptions({
                 data: mergeData.map(function (_d) {
-                    return { name: _d.data[0] + '-' + _this.getName(_d.path), value: _d.data[1] };
+                    var name = _d.data[0] + '-' + _this.getName(_d.path);
+                    _this.names.indexOf(name) === -1 && _this.names.push(name);
+                    return { name: name, value: _d.data[1] };
                 })
             })];
         this._echartSeriesOptions = seriesOpt;
@@ -53,7 +56,8 @@ var KRPieSeries = (function (_super) {
     KRPieSeries = __decorate([
         series_annotation_1.ChartSeries({
             seriesTypes: ['pie'],
-            hasAxises: false
+            hasAxises: false,
+            defaultTrigger: 'item'
         }), 
         __metadata('design:paramtypes', [])
     ], KRPieSeries);

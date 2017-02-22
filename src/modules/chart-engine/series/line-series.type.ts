@@ -24,19 +24,25 @@ interface IECLineOptions extends IECSeriesOptions{
 
 @ChartSeries({
   seriesTypes: ['line', 'area'],
-  hasAxises: true
+  hasAxises: true,
+  defaultTrigger: 'axis'
 })
 export class KRLineSeries extends KRSeries {
 
   protected _render() {
     
     let data = this.data;
+    this.names = [];    
 
     let seriesOpt: IECLineOptions[] = [];
     seriesOpt = data.map((d) => {
+      let name = this.getName(d.path),
+        data = this._dataType === 'category' ? d.data.map(_d => _d[1]) : d.data;
+      
+      this.names.indexOf(name) === -1 && this.names.push(name);
       return this.buildOptions({
-          name: this.getName(d.path),
-          data: this._dataType === 'category' ? d.data.map(_d => _d[1]) : d.data
+          name: name,
+          data: data
         });
     });
 

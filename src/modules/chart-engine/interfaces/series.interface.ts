@@ -86,4 +86,9 @@ export interface IKRChartSeries {
    */
   label?: any;
 
+  /**
+   * @desc series id
+   */
+  id: string | number;
+
 }

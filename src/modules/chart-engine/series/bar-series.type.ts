@@ -26,7 +26,8 @@ interface IEBarOptions extends IECSeriesOptions {
 
 @ChartSeries({
   seriesTypes: ['bar'],
-  hasAxises: true
+  hasAxises: true,
+  defaultTrigger: 'item'
 })
 export class KRBarSeries extends KRSeries {
 
@@ -34,6 +35,7 @@ export class KRBarSeries extends KRSeries {
     
     let data = this.data;
     let seriesOpt: IEBarOptions[] = [];
+    this.names = [];
 
     seriesOpt = data.map((d, i) => {
       let data;
@@ -60,9 +62,11 @@ export class KRBarSeries extends KRSeries {
           };
         });
       }
+      let name = this.getName(d.path);
+      this.names.indexOf(name) === -1 && this.names.push(name);
 
       return this.buildOptions({
-        name: this.getName(d.path),
+        name: name,
         data: data
       });
     });

@@ -14,6 +14,8 @@ import { IKRAxis } from './interfaces/axis.interface';
 import { KRUtils } from './utils.type';
 import { KRAxis } from './components/axis.type';
 import { IKRChartSeries } from './interfaces/series.interface';
+import { KRLegend } from './components/legend.type';
+import { KRToolTip } from './components/tooltip.type';
 
 /**
  * @author george.lin ljz135790@gmail.com
@@ -75,6 +77,10 @@ export class KRChartContainer {
    */
   private _yAxises: KRAxis[];
 
+  private _legend: KRLegend;
+
+  private _tooltip: KRToolTip;
+
   /**
    * @desc formatter
    */
@@ -119,6 +125,12 @@ export class KRChartContainer {
     this._xAxises = [];
     this._yAxises = [];
     this._series = [];
+    if (chartOptions.legend) {
+      this._legend = new KRLegend(this, chartOptions.legend);
+    }
+    if (chartOptions.tooltip) {
+      this._tooltip = new KRToolTip(this, chartOptions.tooltip);
+    }
     this._formatter = formatter;
     this._chartSettings = settings;
     this._chartDirection = chartOptions.direction || 'BottomToTop';
@@ -203,12 +215,16 @@ export class KRChartContainer {
     // **************************************************************
 
     // get tooltip
-
+    if (this._tooltip) {
+      esOptions.tooltip = this._tooltip.options;
+    }
     // **************************************************************
     
-
     // get legend
-    esOptions.legend = this._chartOptions.legend;
+    if (this._legend && this._legend.options.show) {
+      this._legend.setData(this._dataDict);
+      esOptions.legend = this._legend.options;
+    }
     // **************************************************************
     
 
@@ -253,6 +269,10 @@ export class KRChartContainer {
    */
   public addYAxis(yOpts: IKRAxis) {
     this._addYAxis([yOpts]);
+  }
+
+  public getSeries() {
+    return this._series;
   }
 
   /**

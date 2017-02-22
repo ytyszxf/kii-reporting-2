@@ -21,4 +21,6 @@ export interface IKRLegend {
     };
     textStyle?: IKRTextStyle;
     backgroundColor?: string;
+    bind?: Array<string> | string;
+    data?: string[];
 }

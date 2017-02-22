@@ -9,6 +9,8 @@ import { IKRYAxis } from '../interfaces/y-axis.interface';
 import { IKRChartSeries } from '../interfaces/series.interface';
 import { IKRXAxis } from '../interfaces/x-axis.interface';
 import { ISeriesVariables } from '../interfaces/series-variable.interface';
+import { KRUtils } from '../utils.type';
+import { TriggerType } from '../interfaces/trigger.type';
 
 export abstract class KRSeries {
 
@@ -21,6 +23,21 @@ export abstract class KRSeries {
    * @desc describes if series has axises;
    */
   public static hasAxises: boolean;
+
+  /**
+   * @desc trigger default trigger
+   */
+  public static defaultTrigger: TriggerType;
+
+  /**
+   * @desc series names
+   */
+  public names: string[];
+
+  /**
+   * @desc id
+   */
+  public id: string | number;
 
   /**
    * @desc echart compatable series settings
@@ -108,6 +125,9 @@ export abstract class KRSeries {
     this._axisIndex = axisIndex;
     this._dataType = dataType;
     this._seriesOptions = seriesOptions;
+    if (KRUtils.notEmpty(seriesOptions.id)) {
+      this.id = seriesOptions.id;
+    }
   }
 
   /**

@@ -93,8 +93,8 @@ var opts = {
       "must": [{
       	"range": {
           "timeStamp": {
-            "gte": 1485705600000,
-            "lte": 1485792000000 + 60 * 60 * 1 * 1000,
+            "gte": (new Date('2017-02-22 00:00:00')).getTime(),
+            "lte": (new Date()).getTime(),
             "format": "epoch_millis"
           }
         }

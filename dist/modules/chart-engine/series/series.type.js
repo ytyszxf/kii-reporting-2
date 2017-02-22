@@ -1,6 +1,7 @@
 "use strict";
 var halt_handler_type_1 = require('../models/halt-handler.type');
 var data_dictionary_type_1 = require('../../formatter/models/data-dictionary.type');
+var utils_type_1 = require('../utils.type');
 var KRSeries = (function () {
     /**
      * @param  {IKRChartBindingOptions} bindingOptions
@@ -13,6 +14,9 @@ var KRSeries = (function () {
         this._axisIndex = axisIndex;
         this._dataType = dataType;
         this._seriesOptions = seriesOptions;
+        if (utils_type_1.KRUtils.notEmpty(seriesOptions.id)) {
+            this.id = seriesOptions.id;
+        }
     }
     KRSeries.prototype.getName = function (path) {
         if (path === void 0) { path = []; }

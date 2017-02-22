@@ -3,6 +3,8 @@ var colors_1 = require('./settings/colors');
 var series_type_1 = require('./series/series.type');
 var ECharts = require('echarts');
 var axis_type_1 = require('./components/axis.type');
+var legend_type_1 = require('./components/legend.type');
+var tooltip_type_1 = require('./components/tooltip.type');
 /**
  * @author george.lin ljz135790@gmail.com
  */
@@ -14,6 +16,12 @@ var KRChartContainer = (function () {
         this._xAxises = [];
         this._yAxises = [];
         this._series = [];
+        if (chartOptions.legend) {
+            this._legend = new legend_type_1.KRLegend(this, chartOptions.legend);
+        }
+        if (chartOptions.tooltip) {
+            this._tooltip = new tooltip_type_1.KRToolTip(this, chartOptions.tooltip);
+        }
         this._formatter = formatter;
         this._chartSettings = settings;
         this._chartDirection = chartOptions.direction || 'BottomToTop';
@@ -133,9 +141,15 @@ var KRChartContainer = (function () {
         }
         // **************************************************************
         // get tooltip
+        if (this._tooltip) {
+            esOptions.tooltip = this._tooltip.options;
+        }
         // **************************************************************
         // get legend
-        esOptions.legend = this._chartOptions.legend;
+        if (this._legend && this._legend.options.show) {
+            this._legend.setData(this._dataDict);
+            esOptions.legend = this._legend.options;
+        }
         // **************************************************************
         // get data zoom
         // **************************************************************
@@ -171,6 +185,9 @@ var KRChartContainer = (function () {
      */
     KRChartContainer.prototype.addYAxis = function (yOpts) {
         this._addYAxis([yOpts]);
+    };
+    KRChartContainer.prototype.getSeries = function () {
+        return this._series;
     };
     /**
      * @param  {IKRXAxis} xOpts
