@@ -151,9 +151,11 @@ export class SearchResult {
 
     function literate(o1: Object, o2: Object) {
       if (DataDictionary.isFinal(o1)) {
-        (<Array<any>>o2['data']).slice(1).forEach(d => {
-          o1['data'].push(d);
-        });
+        (<Array<any>>o2['data']).forEach((datum, i) => {
+          datum.slice(1).forEach(d => {
+            o1['data'][i].push(d);
+          });
+        })
       } else {
         for (let key in (<Object>o1)) {
           literate(o1[key], o2[key]);

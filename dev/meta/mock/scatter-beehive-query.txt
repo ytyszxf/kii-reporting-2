@@ -13,9 +13,8 @@ var opts = {
         {
           "series": {
             "type": "scatter",
-            "name": "A line",
-            "field": "byTime>02工位>CALC",
-            "bubbleSize": "byTime>02工位>MIN",
+            "field": "byTime>position>CALC",
+            "symbolSizeField": "byTime>position>MIN",
             "haltHandler": "ZERO"
           },
           "options": {
@@ -27,7 +26,7 @@ var opts = {
   },
   "chartQuery": {
     "filter": {
-    	"must_not": [],
+      "must_not": [],
       "must": [
         {
           "terms": {
@@ -49,52 +48,31 @@ var opts = {
       ]
     },
     "aggregation": {
-        "byTime": {
-            "date_histogram": {
-                "field": "state.date",
-                "interval": "1d"
-            },
+      "byTime": {
+        "date_histogram": {
+          "field": "state.date",
+          "interval": "1d"
+        },
+        "aggs": {
+          "position": {
             "aggs": {
-                "02工位": {
-                    "aggs": {
-                        "CALC": {
-                            "avg": {
-                                "field": "state.CO2"
-                            }
-                        },
-                      	"MIN": {
-                            "min": {
-                                "field": "state.CO2"
-                            }
-                        }
-                    },
-                    "filter": {
-                        "terms": {
-                            "state.target": [
-                                "th.f83120e36100-870b-6e11-b1d8-026da82a"
-                            ]
-                        }
-                    }
-                },
-                "01工位": {
-                    "aggs": {
-                        "CALC": {
-                            "avg": {
-                                "field": "state.CO2"
-                            }
-                        }
-                    },
-                    "filter": {
-                        "terms": {
-                            "state.target": [
-                                "th.f83120e36100-870b-6e11-b1d8-034dff1a"
-                            ]
-                        }
-                    }
+              "CALC": {
+                "avg": {
+                  "field": "state.CO2"
                 }
+              },
+              "MIN": {
+                "min": {
+                  "field": "state.CO2"
+                }
+              }
+            },
+            "terms": {
+              "field": "state.target"
             }
+          }
         }
+      }
     }
   }
 }
-      

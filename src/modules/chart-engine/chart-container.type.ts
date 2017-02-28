@@ -190,12 +190,12 @@ export class KRChartContainer {
         .children.find(f => f.field === this.independentAxis[0].field).type;
       let dataType: AggregationValueType = this.independentAxis[0].options.type;
       if (dataType === 'category') {
-        independentAxisOptions.data = this._dataDict.getBucketKeys(this.independentAxis[0].field);
+        independentAxisOptions.data = independentAxisOptions.data || this._dataDict.getBucketKeys(this.independentAxis[0].field);
         if (this.independentAxis[0].options.formatter) {
           let formatter = this.independentAxis[0].options.formatter;
-          independentAxisOptions.data = (<Array<any>>independentAxisOptions.data).map(d => formatter(d));
+          independentAxisOptions.data = independentAxisOptions.data || (<Array<any>>independentAxisOptions.data).map(d => formatter(d));
         } else if (formatterDataType === 'time') {
-          independentAxisOptions.data = (<Array<any>>independentAxisOptions.data).map(d => this._formateTimeData(d));
+          independentAxisOptions.data = independentAxisOptions.data || (<Array<any>>independentAxisOptions.data).map(d => this._formateTimeData(d));
         }
       }
 
@@ -240,6 +240,10 @@ export class KRChartContainer {
     // **************************************************************
 
     console.log(esOptions);
+
+    this._echartInstance.on('click', (event) => {
+      console.log(event);
+    });
 
     this._echartInstance.setOption(esOptions);
   }

@@ -14,7 +14,7 @@ var opts = {
           "series": {
             "type": "line",
             "name": "A line",
-            "field": "byTime>02工位>CALC",
+            "field": "byTime>position>CALC",
             "haltHandler": "ZERO"
           },
           "options": {
@@ -54,7 +54,7 @@ var opts = {
                 "interval": "1d"
             },
             "aggs": {
-                "02工位": {
+                "position": {
                     "aggs": {
                         "CALC": {
                             "avg": {
@@ -62,28 +62,8 @@ var opts = {
                             }
                         }
                     },
-                    "filter": {
-                        "terms": {
-                            "state.target": [
-                                "th.f83120e36100-870b-6e11-b1d8-026da82a"
-                            ]
-                        }
-                    }
-                },
-                "01工位": {
-                    "aggs": {
-                        "CALC": {
-                            "avg": {
-                                "field": "state.CO2"
-                            }
-                        }
-                    },
-                    "filter": {
-                        "terms": {
-                            "state.target": [
-                                "th.f83120e36100-870b-6e11-b1d8-034dff1a"
-                            ]
-                        }
+                    "terms": {
+                      "field": "state.target"
                     }
                 }
             }

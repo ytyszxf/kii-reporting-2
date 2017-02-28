@@ -91,7 +91,6 @@ export class KRScatterSeries extends KRSeries {
 
     let _opts: IECScatterOptions = {
       type: <SeriesType>'scatter',
-      showSymbol: this._options.showSymbol,
       symbolSize: symbolSize instanceof Function ? (val) => {
         return symbolSize(val[2]);
       } : symbolSize
