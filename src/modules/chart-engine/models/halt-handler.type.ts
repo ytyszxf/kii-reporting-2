@@ -23,8 +23,8 @@ export class HaltHandlerProvider {
   }
 
   public static processDataset(dataset: Array<Array<any>>, method: HaltHandler | IHaltHanlder) {
-    let _method: IHaltHanlder = typeof method === 'string' ?
-      HaltHandlerProvider.getHandler(method) : method;
+    let _method: IHaltHanlder = method instanceof Function ? method :
+      HaltHandlerProvider.getHandler(method);
     
     for (let i = 0, d = dataset[i]; i < dataset.length; ++i, d = dataset[i]) {
       if (d.findIndex(_d => _d === undefined || _d === null) === -1) continue;

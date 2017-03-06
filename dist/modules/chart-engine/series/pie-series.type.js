@@ -28,6 +28,12 @@ var KRPieSeries = (function (_super) {
     };
     Object.defineProperty(KRPieSeries.prototype, "variables", {
         get: function () {
+            if (!this._seriesOptions.field) {
+                return {
+                    independentVar: this._seriesOptions.context[0].split('>')[0],
+                    dependentVar: [this._seriesOptions.context[0]]
+                };
+            }
             return {
                 independentVar: this._seriesOptions.field.split('>')[0],
                 dependentVar: [this._seriesOptions.field]

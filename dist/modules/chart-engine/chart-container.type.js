@@ -118,13 +118,16 @@ var KRChartContainer = (function () {
                 .children.find(function (f) { return f.field === _this.independentAxis[0].field; }).type;
             var dataType = this.independentAxis[0].options.type;
             if (dataType === 'category') {
-                independentAxisOptions.data = this._dataDict.getBucketKeys(this.independentAxis[0].field);
+                independentAxisOptions.data = independentAxisOptions.data
+                    || this._dataDict.getBucketKeys(this.independentAxis[0].field);
                 if (this.independentAxis[0].options.formatter) {
                     var formatter_1 = this.independentAxis[0].options.formatter;
-                    independentAxisOptions.data = independentAxisOptions.data.map(function (d) { return formatter_1(d); });
+                    independentAxisOptions.data = independentAxisOptions.data
+                        || independentAxisOptions.data.map(function (d) { return formatter_1(d); });
                 }
                 else if (formatterDataType === 'time') {
-                    independentAxisOptions.data = independentAxisOptions.data.map(function (d) { return _this._formateTimeData(d); });
+                    independentAxisOptions.data = independentAxisOptions.data
+                        || independentAxisOptions.data.map(function (d) { return _this._formateTimeData(d); });
                 }
             }
             var dependentAxisOtions = this.dependentAxis.map(function (axis) {
@@ -160,6 +163,9 @@ var KRChartContainer = (function () {
         esOptions.grid = this._chartOptions.grid;
         // **************************************************************
         console.log(esOptions);
+        this._echartInstance.on('click', function (event) {
+            console.log(event);
+        });
         this._echartInstance.setOption(esOptions);
     };
     /**

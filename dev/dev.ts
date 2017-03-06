@@ -60,12 +60,14 @@ function _execute(opts: IKRChartSettings) {
         let dataDict = formatterEngine.format(response, formatter);
         console.log(dataDict);
         let target = <HTMLDivElement>document.getElementById('target');
+        target.innerHTML = '';
         chartEngine.render(target, opts.chartOptions, dataDict, formatter);
         let endTime = new Date().getTime();
         let msg = `Done. Time consumption: ${(endTime - startTime) / 1000}s`;
         updateConsole(msg);
       } catch (e){
         showTip((<Error>e).message);
+        console.debug(e.stack);
       }
       
     });

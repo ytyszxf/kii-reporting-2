@@ -35,9 +35,18 @@ export abstract class KRSeries {
   public names: string[];
 
   /**
+   * @desc seriesIndexes on chart container
+   */
+  public seriesIndexes: number[];
+
+  /**
    * @desc id
    */
   public id: string | number;
+
+  public get dataType(): AggregationValueType {
+    return this._dataType;
+  }
 
   /**
    * @desc echart compatable series settings
@@ -144,6 +153,10 @@ export abstract class KRSeries {
   public update(dataDict: DataDictionary) {
     this._dataDict = dataDict;
     return this.render();
+  }
+
+  public onClick(event: any) {
+    console.log(this);
   }
   
   /**

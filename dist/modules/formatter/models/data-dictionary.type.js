@@ -135,8 +135,10 @@ var SearchResult = (function () {
         }
         function literate(o1, o2) {
             if (DataDictionary.isFinal(o1)) {
-                o2['data'].slice(1).forEach(function (d) {
-                    o1['data'].push(d);
+                o2['data'].forEach(function (datum, i) {
+                    datum.slice(1).forEach(function (d) {
+                        o1['data'][i].push(d);
+                    });
                 });
             }
             else {

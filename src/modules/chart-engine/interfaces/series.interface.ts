@@ -15,6 +15,11 @@ export interface IKRChartSeries {
   field?: string;
 
   /**
+   * @desc replace field with it
+   */  
+  extend?: string;
+
+  /**
    * @desc script that parses origin data into series,
    *  only works when field is not specified
    * @example script: function(context1, context2, ...){

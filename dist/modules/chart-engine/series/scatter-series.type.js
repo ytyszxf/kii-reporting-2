@@ -64,7 +64,6 @@ var KRScatterSeries = (function (_super) {
         }
         var _opts = {
             type: 'scatter',
-            showSymbol: this._options.showSymbol,
             symbolSize: symbolSize instanceof Function ? function (val) {
                 return symbolSize(val[2]);
             } : symbolSize

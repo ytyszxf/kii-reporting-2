@@ -64,12 +64,13 @@ export class KRChartEngine {
     target: HTMLDivElement,
     opts: IKRChartOptions,
     data: DataDictionary,
-    formatter: IESXAggregationFormatter
+    formatter: IESXAggregationFormatter,
+    parentContainer?: KRChartContainer
   ): KRChartContainer {
 
     if (!this.validateInputJSON(opts)) throw new Error('input not valid');
 
-    let chartContainer = new KRChartContainer(target, formatter, opts, this._settings);
+    let chartContainer = new KRChartContainer(target, formatter, opts, this._settings, this, parentContainer);
 
     /**
      * if axis is specified, can not longer read from chart name field
@@ -95,7 +96,6 @@ export class KRChartEngine {
         if (!opts[seriesTypeName]) continue;
 
         let seriesType = this._findSeriesType(<SeriesType>seriesTypeName);
-
         let series: IKRChartBindingOptions = opts[seriesTypeName];
         if (seriesType.hasAxises) {
           let x = series.x instanceof Array ?

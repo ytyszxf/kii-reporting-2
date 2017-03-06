@@ -17,5 +17,4 @@ export class KRFilterFormatter extends KRAggregationFormatter {
       subDataset: [data]
     };
   }
-
 }

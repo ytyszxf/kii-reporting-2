@@ -25,7 +25,8 @@ export class FormatterEngine {
 
   public format(response: any, formatOpt: IESXAggregationFormatter): DataDictionary {
     let context = {};
-    return this._format(response.aggregations, context, formatOpt);
+    this._format(response.aggregations, context, formatOpt);
+    return new DataDictionary(context, formatOpt, this);
   }
 
   /**
@@ -49,7 +50,7 @@ export class FormatterEngine {
     });
   }
 
-  private _format(data, context: any, formatOpt: IESXAggregationFormatter): DataDictionary {
+  private _format(data, context: any, formatOpt: IESXAggregationFormatter) {
     let formatter = this._findAggregationFormatter(formatOpt.aggregationName);
     let formatContexts = formatter.format(context, data, formatOpt);
 
@@ -67,7 +68,6 @@ export class FormatterEngine {
       });
     });
 
-    return new DataDictionary(context, formatOpt, this);
   }
 
   public findAggregationFormatter(name: string) {
