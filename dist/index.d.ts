@@ -16,6 +16,7 @@ import 'core-js/es6/weak-set';
 import 'core-js/es6/typed';
 import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
+import 'ts-helpers';
 export * from './bootstrap';
 export * from './modules/chart-engine/chart-container.type';
 export * from './modules/chart-engine/chart-engine.type';

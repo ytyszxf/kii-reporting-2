@@ -122,7 +122,7 @@ export class KRChartContainer {
     private _parent?: KRChartContainer
   ) {
     this._symbolIndex = 0;
-    this._colors = ITEM_COLORS;
+    this._colors = settings.colors || ITEM_COLORS;
     let _ele = document.createElement('div');
     _ele.style.height = "100%";
     _ele.style.width = "100%";

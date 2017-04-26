@@ -23,6 +23,8 @@ require('core-js/es6/typed');
 require('core-js/es6/reflect');
 // import 'core-js/es6/promise';
 require('core-js/es7/reflect');
+// Typescript emit helpers polyfill
+require('ts-helpers');
 var chart_container_type_1 = require('./modules/chart-engine/chart-container.type');
 var bootstrap_1 = require('./bootstrap');
 var chart_engine_type_1 = require('./modules/chart-engine/chart-engine.type');

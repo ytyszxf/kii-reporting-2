@@ -22,6 +22,8 @@ import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
 
 // Typescript emit helpers polyfill
+import 'ts-helpers';
+
 import { start } from './dev/dev';
 import { KRChartContainer } from './modules/chart-engine/chart-container.type';
 import { bootstrap } from './bootstrap';
