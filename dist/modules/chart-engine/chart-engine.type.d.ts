@@ -6,7 +6,7 @@ import { KRChartContainer } from './chart-container.type';
 import { KRSeries } from './series/series.type';
 import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
 import { DataDictionary } from '../formatter/models/data-dictionary.type';
-export interface IKRChartSettings {
+export interface KRChartConfig {
     xAxis?: IKRAxis;
     yAxis?: IKRAxis;
     legend?: IKRLegend;
@@ -17,9 +17,9 @@ export declare class KRChartEngine {
     private _configSettings;
     private _seriesTypes;
     constructor(seriesTypes: Array<typeof KRSeries>);
-    config: IKRChartSettings;
+    config: KRChartConfig;
     /**
-     * @returns IKRChartSettings
+     * @returns KRChartConfig
      */
     private readonly _settings;
     /**
@@ -30,7 +30,7 @@ export declare class KRChartEngine {
      * @returns KRChartContainer
      * @desc render data and return a chart container instance
      */
-    render(target: HTMLDivElement, opts: IKRChartOptions, data: DataDictionary, formatter: IESXAggregationFormatter): KRChartContainer;
+    render(target: HTMLDivElement, opts: IKRChartOptions, data: DataDictionary, formatter: IESXAggregationFormatter, parentContainer?: KRChartContainer): KRChartContainer;
     private updateChartContainer(chartContainer, x, y, direction);
     private updateChartContainerWithoutAxis(chartContainer, series, seriesTypeName);
     private validateInputJSON(input);

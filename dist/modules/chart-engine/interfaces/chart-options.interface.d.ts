@@ -5,6 +5,7 @@ import { IKRLegend } from './legend.interface';
 import { IKRChartSeries } from './series.interface';
 import { ChartDirection } from '../models/chart-direction.type';
 import { IKRToolTip } from './tooltip.interface';
+import { IToolBox } from './toolbox.interface';
 export interface IKRChartBindingOptions {
     x?: IKRXAxis[] | IKRXAxis;
     y?: IKRYAxis[] | IKRYAxis;
@@ -48,4 +49,12 @@ export interface IKRChartOptions {
      * @desc tooltip
      */
     tooltip: IKRToolTip;
+    /**
+     * drilldown settings
+     */
+    drilldown: IKRChartOptions;
+    /**
+     * toolbox
+     */
+    toolbox: IToolBox;
 }

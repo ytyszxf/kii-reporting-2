@@ -9,7 +9,8 @@ var FormatterEngine = (function () {
     }
     FormatterEngine.prototype.format = function (response, formatOpt) {
         var context = {};
-        return this._format(response.aggregations, context, formatOpt);
+        this._format(response.aggregations, context, formatOpt);
+        return new data_dictionary_type_1.DataDictionary(context, formatOpt, this);
     };
     /**
      * @param  {string} name
@@ -48,7 +49,6 @@ var FormatterEngine = (function () {
                 _this._format(formatContexts.subDataset[i][agg.field], subContext, agg);
             });
         });
-        return new data_dictionary_type_1.DataDictionary(context, formatOpt, this);
     };
     FormatterEngine.prototype.findAggregationFormatter = function (name) {
         return this._findAggregationFormatter(name);

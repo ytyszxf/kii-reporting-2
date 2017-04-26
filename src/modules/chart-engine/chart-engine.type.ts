@@ -14,7 +14,7 @@ import { IKRChartSeries } from './interfaces/series.interface';
 import { IKRXAxis } from './interfaces/x-axis.interface';
 import { ChartDirection } from './models/chart-direction.type';
 
-export interface IKRChartSettings {
+export interface KRChartConfig {
   xAxis?: IKRAxis;
   yAxis?: IKRAxis;
   legend?: IKRLegend;
@@ -23,8 +23,8 @@ export interface IKRChartSettings {
 
 export class KRChartEngine {
 
-  private _defaultSettings: IKRChartSettings;
-  private _configSettings: IKRChartSettings;
+  private _defaultSettings: KRChartConfig;
+  private _configSettings: KRChartConfig;
   private _seriesTypes: { [name: string]: typeof KRSeries };
 
   constructor(seriesTypes: Array<typeof KRSeries>) {
@@ -34,7 +34,7 @@ export class KRChartEngine {
     this._loadSeriesTypes(seriesTypes);
   }
 
-  public set config(conf: IKRChartSettings) {
+  public set config(conf: KRChartConfig) {
     this._configSettings = conf;
   }
 
@@ -43,7 +43,7 @@ export class KRChartEngine {
   }
 
   /**
-   * @returns IKRChartSettings
+   * @returns KRChartConfig
    */
   private get _settings() {
     let settings = {};

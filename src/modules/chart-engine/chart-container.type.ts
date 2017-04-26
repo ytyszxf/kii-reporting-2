@@ -2,7 +2,7 @@ import { ITEM_COLORS } from './settings/colors';
 import { SeriesType } from './models/series-type.type';
 import { IKRChartBindingOptions, IKRChartOptions } from './interfaces/chart-options.interface';
 import { KRSeries } from './series/series.type';
-import { IKRChartSettings, KRChartEngine } from './chart-engine.type';
+import { KRChartConfig, KRChartEngine } from './chart-engine.type';
 import * as ECharts from 'echarts';
 import { IKRXAxis } from './interfaces/x-axis.interface';
 import { IKRYAxis } from './interfaces/y-axis.interface';
@@ -55,7 +55,7 @@ export class KRChartContainer {
   /**
    * @desc chart settings
    */
-  private _chartSettings: IKRChartSettings;
+  private _chartSettings: KRChartConfig;
 
   /**
    * @desc chart Options
@@ -117,7 +117,7 @@ export class KRChartContainer {
     private _containerEle: HTMLDivElement,
     formatter: IESXAggregationFormatter,
     chartOptions: IKRChartOptions,
-    settings: IKRChartSettings,
+    settings: KRChartConfig,
     private _chartEngine: KRChartEngine,
     private _parent?: KRChartContainer
   ) {

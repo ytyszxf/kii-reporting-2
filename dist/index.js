@@ -23,8 +23,6 @@ require('core-js/es6/typed');
 require('core-js/es6/reflect');
 // import 'core-js/es6/promise';
 require('core-js/es7/reflect');
-// Typescript emit helpers polyfill
-require('ts-helpers');
 var chart_container_type_1 = require('./modules/chart-engine/chart-container.type');
 var bootstrap_1 = require('./bootstrap');
 var chart_engine_type_1 = require('./modules/chart-engine/chart-engine.type');
@@ -35,8 +33,9 @@ if (window) {
     window['KRChartEngine'] = chart_engine_type_1.KRChartEngine;
     window['KRQueryParser'] = query_parser_type_1.KRQueryParser;
 }
-__export(require('./modules/chart-engine/chart-container.type'));
 __export(require('./bootstrap'));
+__export(require('./modules/chart-engine/chart-container.type'));
 __export(require('./modules/chart-engine/chart-engine.type'));
 __export(require('./modules/parser/models/query-parser.type'));
+__export(require('./modules/formatter/formatter-engine.type'));
 //# sourceMappingURL=index.js.map

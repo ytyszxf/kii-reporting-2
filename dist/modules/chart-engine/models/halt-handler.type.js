@@ -17,8 +17,8 @@ var HaltHandlerProvider = (function () {
         }
     };
     HaltHandlerProvider.processDataset = function (dataset, method) {
-        var _method = typeof method === 'string' ?
-            HaltHandlerProvider.getHandler(method) : method;
+        var _method = method instanceof Function ? method :
+            HaltHandlerProvider.getHandler(method);
         for (var i = 0, d = dataset[i]; i < dataset.length; ++i, d = dataset[i]) {
             if (d.findIndex(function (_d) { return _d === undefined || _d === null; }) === -1)
                 continue;

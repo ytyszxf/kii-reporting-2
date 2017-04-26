@@ -22,7 +22,6 @@ import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
 
 // Typescript emit helpers polyfill
-import 'ts-helpers';
 import { start } from './dev/dev';
 import { KRChartContainer } from './modules/chart-engine/chart-container.type';
 import { bootstrap } from './bootstrap';
@@ -36,7 +35,9 @@ if (window) {
   window['KRQueryParser'] = KRQueryParser;
 }
 
-export * from './modules/chart-engine/chart-container.type';
 export * from './bootstrap';
+export * from './modules/chart-engine/chart-container.type';
 export * from './modules/chart-engine/chart-engine.type';
 export * from './modules/parser/models/query-parser.type';
+export * from './modules/formatter/formatter-engine.type';
+export * from '../src/modules/parser/models/chart-settings.interface';

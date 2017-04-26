@@ -7,7 +7,7 @@ import { bootstrap } from '../src/bootstrap';
 import { sampleQueryTerms } from './meta/mock/sample-query-terms';
 import { sampleResponseTerms } from './meta/mock/sample-response-terms';
 import { KRLineSeries } from '../src/modules/chart-engine/series/line-series.type';
-import { IKRChartBindingOptions, IKRChartOptions } from '../src/modules/chart-engine/interfaces/chart-options.interface';
+import { IKRChartOptions } from '../src/modules/chart-engine/interfaces/chart-options.interface';
 import { KRChartContainer } from '../src/modules/chart-engine/chart-container.type';
 import * as createEditor from 'javascript-editor';
 import { IKRChartSettings } from '../src/modules/parser/models/chart-settings.interface';

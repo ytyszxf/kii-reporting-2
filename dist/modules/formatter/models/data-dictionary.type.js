@@ -5,17 +5,94 @@ var DataDictionary = (function () {
         this.data = data;
         this.aggFormatter = aggFormatter;
         this.formatterEngine = formatterEngine;
+        this.pathMapper = {};
         this.raw = data;
+        this.init();
     }
     DataDictionary.isFinal = function (d) {
         return d.data && d.data instanceof Array;
     };
+    DataDictionary.prototype.init = function () {
+        var self = this;
+        literate(this.data, this.aggFormatter, []);
+        this.fillGap(this.data, this.aggFormatter, []);
+        function literate(data, agg, path) {
+            agg.children
+                .forEach(function (child) {
+                var newPath = path.concat([child.field]), newPathStr = newPath.join('-');
+                var aggMethod = self.getKRFormatter(child.aggregationName);
+                if (aggMethod.formatMode !== aggregation_formatter_annotation_1.FormatMode.EXPAND) {
+                    self.pathMapper[newPathStr] = new Set([data[child.field][0][0]]);
+                    literate(data[child.field][1], child, newPath);
+                    return;
+                }
+                if (aggMethod.aggType !== 'terms') {
+                    if (!self.pathMapper[newPathStr]) {
+                        self.pathMapper[newPathStr] = new Set(data[child.field].map(function (d) { return d[0]; }));
+                    }
+                    data[child.field].forEach(function (d) {
+                        literate(d[1], child, path.concat([child.field]));
+                    });
+                }
+                else {
+                    if (!self.pathMapper[newPathStr]) {
+                        self.pathMapper[newPathStr] = new Set();
+                    }
+                    data[child.field].forEach(function (d) {
+                        if (!self.pathMapper[newPathStr].has(d[0])) {
+                            self.pathMapper[newPathStr].add(d[0]);
+                        }
+                        literate(d[1], child, path.concat([child.field]));
+                    });
+                }
+            });
+        }
+    };
+    DataDictionary.prototype.fillGap = function (data, agg, path) {
+        var _this = this;
+        var self = this;
+        agg.children.forEach(function (child) {
+            var newPath = path.concat([child.field]), newdata = data[child.field];
+            if (child.aggregationName === 'terms') {
+                var newPathStr = newPath.join('-');
+                _this.pathMapper[newPathStr]
+                    .forEach(function (key) {
+                    if (!newdata.find(function (d) { return d[0] === key; })) {
+                        fill(newdata, key, child, newPath);
+                    }
+                });
+            }
+            else {
+                newdata.forEach(function (d) {
+                    _this.fillGap(d[1], child, newPath);
+                });
+            }
+        });
+        function fill(dataset, value, agg, path) {
+            var subset = {};
+            dataset.push([value, subset]);
+            agg.metrics.forEach(function (metric) {
+                subset[metric.field] = null;
+            });
+            agg.children.forEach(function (child) {
+                var newPath = path.concat([child.field]), newPathStr = newPath.join('-');
+                subset[child.field] = [];
+                self.pathMapper[newPathStr].forEach(function (key) {
+                    fill(subset[child.field], key, child, newPath);
+                });
+            });
+        }
+    };
+    /**
+     * @param {string} root
+     * @param {Array<any>} path
+     */
     DataDictionary.prototype.getBucketKeys = function (root, path) {
         if (path === void 0) { path = []; }
         if (!this.validateRootAndPath(root, path)) {
             throw new Error('root path not match path params!');
         }
-        var dataRoot = this.getDataRoot(root, path);
+        var dataRoot = this.getDataRoot(this.data, root, path);
         return dataRoot.map(function (d) { return d[0]; });
     };
     DataDictionary.prototype.search = function (root, query, path) {
@@ -30,7 +107,7 @@ var DataDictionary = (function () {
         if (!this.validateQuery(root, query)) {
             throw new Error('root path not math query path!');
         }
-        var dataRoot = this.getDataRoot(root, path);
+        var dataRoot = this.getDataRoot(this.data, root, path);
         var rootPath = root.split('>');
         var pathLink = query.split('>');
         var startIndex = rootPath.length;
@@ -57,7 +134,7 @@ var DataDictionary = (function () {
                     }
                     else {
                         data.forEach(function (d) {
-                            var _d = d[1][pathLink[0]];
+                            var _d = d[1][pathLink[i]];
                             if (formatter.formatMode === aggregation_formatter_annotation_1.FormatMode.EXPAND) {
                                 if (!r[d[0]]) {
                                     r[d[0]] = {};
@@ -83,16 +160,18 @@ var DataDictionary = (function () {
         rootPath.forEach(function (pace) {
             currentAgg = currentAgg.children.find(function (f) { return f.field === pace; });
         });
-        return this.formatterEngine
-            .findAggregationFormatter(currentAgg.aggregationName).constructor;
+        return this.getKRFormatter(currentAgg.aggregationName);
     };
-    DataDictionary.prototype.getDataRoot = function (root, path) {
+    DataDictionary.prototype.getKRFormatter = function (aggregationName) {
+        return this.formatterEngine
+            .findAggregationFormatter(aggregationName).constructor;
+    };
+    DataDictionary.prototype.getDataRoot = function (data, root, path) {
         var rootPath = root.split('>');
-        var _dataRoot = this.data;
-        for (var i = 0; i < rootPath.length - 1; i++) {
-            _dataRoot = _dataRoot[rootPath[i]][path[i]];
-        }
-        return _dataRoot[rootPath[rootPath.length - 1]];
+        // for (let i = 0; i < rootPath.length - 1; i++){
+        //   _dataRoot = _dataRoot[rootPath[i]][path[i]];
+        // }
+        return data[rootPath[rootPath.length - 1]];
     };
     DataDictionary.prototype.validateRootAndPath = function (root, path) {
         var rootPath = root.split('>');
@@ -113,6 +192,14 @@ var DataDictionary = (function () {
     DataDictionary.prototype.setData = function (data) {
         this.data = data;
     };
+    DataDictionary.prototype.getSubset = function (independentVal, agg) {
+        var dataset = this.data[agg.split('>').pop()].find(function (d) { return d[0] === independentVal; });
+        if (!dataset)
+            throw new Error("dataset not found for independentVal: " + independentVal + ". Data: " + this.data);
+        var data = dataset[1];
+        var aggFormatter = this.aggFormatter.children.find(function (o) { return o.field === agg; });
+        return new DataDictionary(data, aggFormatter, this.formatterEngine);
+    };
     return DataDictionary;
 }());
 exports.DataDictionary = DataDictionary;
@@ -131,20 +218,20 @@ var SearchResult = (function () {
             });
         }
         else {
-            literate(this.data, result.data);
+            this._literate(this.data, result.data);
         }
-        function literate(o1, o2) {
-            if (DataDictionary.isFinal(o1)) {
-                o2['data'].forEach(function (datum, i) {
-                    datum.slice(1).forEach(function (d) {
-                        o1['data'][i].push(d);
-                    });
+    };
+    SearchResult.prototype._literate = function (o1, o2) {
+        if (DataDictionary.isFinal(o1)) {
+            o2['data'].forEach(function (datum, i) {
+                datum.slice(1).forEach(function (d) {
+                    o1['data'][i].push(d);
                 });
-            }
-            else {
-                for (var key in o1) {
-                    literate(o1[key], o2[key]);
-                }
+            });
+        }
+        else {
+            for (var key in o1) {
+                this._literate(o1[key], o2[key]);
             }
         }
     };

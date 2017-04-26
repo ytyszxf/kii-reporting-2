@@ -24,9 +24,14 @@ export declare abstract class KRSeries {
      */
     names: string[];
     /**
+     * @desc seriesIndexes on chart container
+     */
+    seriesIndexes: number[];
+    /**
      * @desc id
      */
     id: string | number;
+    readonly dataType: AggregationValueType;
     /**
      * @desc echart compatable series settings
      */
@@ -83,6 +88,7 @@ export declare abstract class KRSeries {
      *
      */
     update(dataDict: DataDictionary): IECSeriesOptions[];
+    onClick(event: any): void;
     /**
      * @desc core function that produce output
      */

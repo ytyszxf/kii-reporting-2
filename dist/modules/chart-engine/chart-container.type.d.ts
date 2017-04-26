@@ -1,7 +1,7 @@
 import { SeriesType } from './models/series-type.type';
 import { IKRChartOptions } from './interfaces/chart-options.interface';
 import { KRSeries } from './series/series.type';
-import { IKRChartSettings } from './chart-engine.type';
+import { KRChartConfig, KRChartEngine } from './chart-engine.type';
 import { IESXAggregationFormatter } from '../formatter/interfaces/aggregation-formatter.interface';
 import { DataDictionary } from '../formatter/models/data-dictionary.type';
 import { IKRAxis } from './interfaces/axis.interface';
@@ -11,6 +11,9 @@ import { IKRChartSeries } from './interfaces/series.interface';
  * @author george.lin ljz135790@gmail.com
  */
 export declare class KRChartContainer {
+    private _containerEle;
+    private _chartEngine;
+    private _parent;
     /**
      * @desc pointer index of symbol pool
      */
@@ -30,7 +33,7 @@ export declare class KRChartContainer {
     /**
      * @desc dom element that hold the chart
      */
-    private _containerElement;
+    private _targetElement;
     /**
      * @desc dataset
      */
@@ -70,7 +73,7 @@ export declare class KRChartContainer {
     readonly independentAxis: KRAxis[];
     readonly dependentAxis: KRAxis[];
     readonly color: string[];
-    constructor(ele: HTMLDivElement, formatter: IESXAggregationFormatter, chartOptions: IKRChartOptions, settings: IKRChartSettings);
+    constructor(_containerEle: HTMLDivElement, formatter: IESXAggregationFormatter, chartOptions: IKRChartOptions, settings: KRChartConfig, _chartEngine: KRChartEngine, _parent?: KRChartContainer);
     update(dataDict: DataDictionary): void;
     addSeries(typeName: SeriesType, seriesType: typeof KRSeries, seriesOpt: IKRChartSeries, yAxisGroupIndex?: number): void;
     render(): void;
@@ -99,4 +102,7 @@ export declare class KRChartContainer {
      */
     private _addYAxis(opts);
     private _formateTimeData(date);
+    show(): void;
+    hide(): void;
+    destroy(): void;
 }

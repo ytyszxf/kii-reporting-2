@@ -22,7 +22,7 @@ var KRChartEngine = (function () {
     });
     Object.defineProperty(KRChartEngine.prototype, "_settings", {
         /**
-         * @returns IKRChartSettings
+         * @returns KRChartConfig
          */
         get: function () {
             var settings = {};
@@ -41,10 +41,10 @@ var KRChartEngine = (function () {
      * @returns KRChartContainer
      * @desc render data and return a chart container instance
      */
-    KRChartEngine.prototype.render = function (target, opts, data, formatter) {
+    KRChartEngine.prototype.render = function (target, opts, data, formatter, parentContainer) {
         if (!this.validateInputJSON(opts))
             throw new Error('input not valid');
-        var chartContainer = new chart_container_type_1.KRChartContainer(target, formatter, opts, this._settings);
+        var chartContainer = new chart_container_type_1.KRChartContainer(target, formatter, opts, this._settings, this, parentContainer);
         /**
          * if axis is specified, can not longer read from chart name field
          * example:

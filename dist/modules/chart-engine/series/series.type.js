@@ -18,6 +18,13 @@ var KRSeries = (function () {
             this.id = seriesOptions.id;
         }
     }
+    Object.defineProperty(KRSeries.prototype, "dataType", {
+        get: function () {
+            return this._dataType;
+        },
+        enumerable: true,
+        configurable: true
+    });
     KRSeries.prototype.getName = function (path) {
         if (path === void 0) { path = []; }
         if (typeof this._options.name === 'string') {
@@ -69,6 +76,9 @@ var KRSeries = (function () {
     KRSeries.prototype.update = function (dataDict) {
         this._dataDict = dataDict;
         return this.render();
+    };
+    KRSeries.prototype.onClick = function (event) {
+        console.log(this);
     };
     Object.defineProperty(KRSeries.prototype, "variables", {
         get: function () { },
