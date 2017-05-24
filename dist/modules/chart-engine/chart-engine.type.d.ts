@@ -11,6 +11,7 @@ export interface KRChartConfig {
     yAxis?: IKRAxis;
     legend?: IKRLegend;
     textStyle?: IKRTextStyle;
+    colors?: string[];
 }
 export declare class KRChartEngine {
     private _defaultSettings;
